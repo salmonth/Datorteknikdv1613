@@ -14,8 +14,7 @@ inImage:
 getInt:
 	movq	$counter,%rbx
 	movq	$buf,%rdi
-	movq	%rdi,%rbx,
-	movq	$8,%rax
+	movq	%rdi,%rbx
 	mulq	%rbx	
 	cmpq	$32, %rdi
 	je	gonext
