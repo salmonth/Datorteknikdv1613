@@ -1,0 +1,47 @@
+	.data
+buf:	.space	64
+format: .asciz "%d\n"
+counter: .long 0
+	.text
+	.global	main
+
+inImage:
+	pushq	$0
+	movq	$buf, %rdi
+	movq	$5, %rsi
+	movq	stdin, %rdx
+	call	fgets
+getInt:
+	movq	$counter,%rbx
+	movq	$buf,%rdi
+	movq	%rdi,%rbx,
+	movq	$8,%rax
+	mulq	%rbx	
+	cmpq	$32, %rdi
+	je	gonext
+	cmpq	$43, %rdi
+	je	gonext
+	cmpq	$45, %rdi
+	je	gonext
+	cmpq	$48, %rdi
+	jge	checkascii
+checkascii:
+	cmpq	$57, %rdi
+	jle	gonext
+gonext:
+	pushq	%rdi
+	incq	%rbx
+	movq	%rbx,$counter
+	movq	%rdi,$format
+	call	getInt
+getText:
+getChar:
+getInPos:
+SetInPos:
+outImage:
+putInt:
+putText:
+putChar:
+getOutPos:
+setOutPos:
+
