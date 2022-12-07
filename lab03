@@ -6,19 +6,20 @@ counter: .long 0
 	.global	main
 main:
 	pushq	$0
-	call 	inimage
+	call 	inImage
 inImage:
 	movq	$buf, %rdi
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-	movq	$buf,%rdi
-	pushq	%counter
+	movq	$counter,%rax
+	pushq	%rax
 	call	checkifInt
 checkifInt:
 	popq	%rsi
-	movq	(%rdi,,%rsi),%rdi
+	movq	$buf,%rdi
+	movq	(%rdi,%rsi,4),%rdi
 	cmpq	$32, %rdi
 	je		continueloop
 	cmpq	$43, %rdi
@@ -33,8 +34,8 @@ checkifnumber:
 	jle		continueloop
 continueloop:
 	pushq	%rdi
-	incq	%counter
-	pushq	%counter
+	incq	%rax
+	pushq	%rax
 	call	checkifInt
 endloop:
 
