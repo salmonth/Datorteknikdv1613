@@ -4,43 +4,37 @@ format: .asciz "%d\n"
 counter: .long 0
 	.text
 	.global	main
-
-inImage:
+main:
 	pushq	$0
+	call 	inimage
+inImage:
 	movq	$buf, %rdi
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-	movq	$counter,%rbx
 	movq	$buf,%rdi
-	movq	%rdi,%rbx
-	mulq	%rbx	
+	pushq	%counter
+	call	checkifInt
+checkifInt:
+	popq	%rsi
+	movq	(%rdi,,%rsi),%rdi
 	cmpq	$32, %rdi
-	je	gonext
+	je		continueloop
 	cmpq	$43, %rdi
-	je	gonext
+	je		continueloop
 	cmpq	$45, %rdi
-	je	gonext
+	je		continueloop
 	cmpq	$48, %rdi
-	jge	checkascii
-checkascii:
+	jle		checkifnumber
+	call 	endloop
+checkifnumber:
 	cmpq	$57, %rdi
-	jle	gonext
-gonext:
+	jle		continueloop
+continueloop:
 	pushq	%rdi
-	incq	%rbx
-	movq	%rbx,$counter
-	movq	%rdi,$format
-	call	getInt
-getText:
-getChar:
-getInPos:
-SetInPos:
-outImage:
-putInt:
-putText:
-putChar:
-getOutPos:
-setOutPos:
+	incq	%counter
+	pushq	%counter
+	call	checkifInt
+endloop:
 
