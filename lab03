@@ -6,20 +6,20 @@ counter: .long 0
 	.global	main
 main:
 	pushq	$0
-	call 	inImage
+	movq    $counter, %r8 # lagt counter i register r8 (förslag)
+	call 	inImage # camelcase inImage
 inImage:
 	movq	$buf, %rdi
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-	movq	$counter,%rax
-	pushq	%rax
+	movq	$buf,%rdi
+	pushq	%r8 # pushar ett register istället för label 'counter' 
 	call	checkifInt
 checkifInt:
 	popq	%rsi
-	movq	$buf,%rdi
-	movq	(%rdi,%rsi,4),%rdi
+	movq	(%rdi,%rsi),%rdi # raderat dubbla kommatecken
 	cmpq	$32, %rdi
 	je		continueloop
 	cmpq	$43, %rdi
@@ -34,8 +34,8 @@ checkifnumber:
 	jle		continueloop
 continueloop:
 	pushq	%rdi
-	incq	%rax
-	pushq	%rax
+	incq	%r8 # ökar och pushar (?) registret som pekar på counter för dessa två rader
+	pushq	%r8
 	call	checkifInt
 endloop:
 
