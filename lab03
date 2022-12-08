@@ -7,6 +7,7 @@ counter: .long 0
 main:
 	pushq	$0
 	movq    $counter, %r8 # lagt counter i register r8 (förslag)
+	movq	$format, %rbx
 	call 	inImage # camelcase inImage
 inImage:
 	movq	$buf, %rdi
@@ -28,6 +29,7 @@ checkifInt:
 	je		continueloop
 	cmpq	$48, %rdi
 	jle		checkifnumber
+	movq	%r8, %r9	# kopiera antal tecken till register r9
 	call 	endloop
 checkifnumber:
 	cmpq	$57, %rdi
@@ -38,4 +40,8 @@ continueloop:
 	pushq	%r8
 	call	checkifInt
 endloop:
-
+	movq	(%rsi), %rbx	# flyttar aktuellt tal/tecken till format (rbx)
+    	popq    %rsi        	# popar rsi från stacken
+    	decq    %r9         	# minskar r9 med 1
+    	cmpq    $0,%r9      	# jämför med 0 (slut på antal tecken)
+    	jge     endLoop
