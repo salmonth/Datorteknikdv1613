@@ -45,3 +45,16 @@ endloop:
     	decq    %r9         	# minskar r9 med 1
     	cmpq    $0,%r9      	# jämför med 0 (slut på antal tecken)
     	jge     endLoop
+getText:
+	movq	$countText, %r9
+	movq	%rsi, %r9		# rsi är antal tecken (parameter 1 i testprogram Mprov64.s)
+    	movq    $buf, %rdi  	# kopiera/flytta buf till rdi
+    	call    inImage     	# anropar inImage för att ta emot sträng och nollställa position i buf (counter)
+    	call    addText   		# subrutin för att lägga till text till format
+addText:
+	movq	(%rdi, %r8), %rdi
+	pushq	%rdi	
+	incq	%r8				# aktuell position
+	cmpq	%r8, %r9		# jämför aktuell position med parameter 1
+	je		endloop			# om lika, gå till endloop för avslut
+	call	addText			# lägg till nästa tecken i buf
