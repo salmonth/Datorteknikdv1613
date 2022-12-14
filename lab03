@@ -84,3 +84,9 @@ lessthanzero:
 largerthanzero:
 	movq	$64,%rdi	# rdi blir 64
 	call 	setInPos
+	
+outImage:
+	movq	$format, %rdi
+	movq	$5, %rsi
+	movq	stdin, %rdx
+	call	puts
