@@ -91,6 +91,99 @@ outImage:
 	movq	stdin, %rdx
 	call	puts
 
+.data
+inbuf:	.space	64
+outbuf: .asciz "%d\n"
+Incounter: .long 0
+Outcounter: .long 0
+	.text
+	.global	main
+main:
+	pushq	$0
+	movq    $Incounter, %r8 # lagt counter i register r8 (förslag)
+	movq	$outbuf, %rbx
+	call 	inImage # camelcase inImage
+inImage:
+	movq	$inbuf, %rdi
+	movq	$5, %rsi
+	movq	stdin, %rdx
+	call	fgets
+getInt:
+	movq	$inbuf,%rdi
+	pushq	%r8 # pushar ett register istället för label 'counter' 
+	call	checkifInt
+checkifInt:
+	popq	%rsi
+	movq	(%rdi,%rsi),%rdi # raderat dubbla kommatecken
+	cmpq	$32, %rdi
+	je		continueloop
+	cmpq	$43, %rdi
+	je		continueloop
+	cmpq	$45, %rdi
+	je		continueloop
+	cmpq	$48, %rdi
+	jle		checkifnumber
+	movq	%r8, %r9	# kopiera antal tecken till register r9
+	call 	endloop
+checkifnumber:
+	cmpq	$57, %rdi
+	jle		continueloop
+continueloop:
+	pushq	%rdi
+	incq	%r8 # ökar och pushar (?) registret som pekar på counter för dessa två rader
+	pushq	%r8
+	call	checkifInt
+
+getText:
+		# rsi är antal tecken (parameter 1 i testprogram Mprov64.s)
+    	movq    $inbuf, %rdi  	# kopiera/flytta buf till rdi
+    	call    inImage     	# anropar inImage för att ta emot sträng och nollställa position i buf (counter)
+    	call    addText   		# subrutin för att lägga till text till format
+addText:
+	movq	(%rdi, %r8), %rdi
+	pushq	%rdi	
+	incq	%r8				# aktuell position
+	cmpq	%r8, %r9		# jämför aktuell position med parameter 1
+	je		endloop			# om lika, gå till endloop för avslut
+	call	addText			# lägg till nästa tecken i buf
+
+
+endloop:
+	movq	(%rsi), %rbx	# flyttar aktuellt tal/tecken till format (rbx)
+	popq    %rsi        	# popar rsi från stacken
+	decq    %r9         	# minskar r9 med 1
+	cmpq    $0,%r9      	# jämför med 0 (slut på antal tecken)
+	jge     endloop	
+
+getChar:
+	movq    $inbuf, %rdi 		# flyttar buf till rdi
+	cmpq	$0,%rdi			# Ifall ord saknas eller är i slutet är sista tecken \n.
+	je		inImage
+	movq	(%rdi,%r8),%rax # tar nuvarande bokstav
+	incq	%r8				#  ökar med 1
+
+getInPos:
+	movq	$Incounter,%rax	# returnerar vad som står i counter
+
+setInPos:
+	cmpq	$0,%rdi		# kollar ifall det är mindre än noll
+	jl		lessthanzero
+	cmpq	$64,%rdi	# kollar ifall det är större än 64
+	jg		largerthanzero
+	movq	$Incounter, %rdi	# ändra värdet på counter
+lessthanzero:
+	movq	$0,%rdi # rdi blir 0
+	call	setInPos
+largerthanzero:
+	movq	$64,%rdi	# rdi blir 64
+	call 	setInPos
+	
+outImage:
+	movq	$outbuf, %rdi
+	movq	$5, %rsi
+	movq	stdin, %rdx
+	call	puts
+
 putInt:
     movq    $outbuf,%rdx
     movq    $Outcounter,%r8
