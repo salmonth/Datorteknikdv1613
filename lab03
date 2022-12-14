@@ -192,4 +192,25 @@ putInt:
 	je		inImage
 	movq	(%rdx,%r8),%rdi # tar nuvarande bokstav
 	incq	%r8				#  ökar med 1
+
+# putText = ej färdig rutin, men lade upp iaf.
+# behöver något sätt att hantera om textsträng överskrider sista tecken i utbuffert,
+# (storlek på buffert) - startindex?
+putText:
+	movq	$outbuf, %rdx       # lägg outbuf i register rdx
+    movq    $Outcounter, %r8    # lägg conter för utbuffert i r8
+    call    getInPos            # anropar getInPos för att veta startindex (?)
+    movq    %rax, %r8           # Outcounter = Incounter
+    movq	(%rdi, %r8), %rdx   # lägger värde från buf/sträng från startindex mha getInPos i rdx 
+    cmpq	$0,%rdx			    # Ifall ord saknas eller är i slutet är sista tecken \n.
+    je		outImage            # om outbuf är tom, gå till outImage
+    movq	(%rdi, %rax),%rdx   # tar nuvarande bokstav
+	incq	%r8				    # ökar outcounter med 1
+	call	textloop            # loop
+getTextLoop:
+	cmpq	$0, (%rdx)          # jämför nullterminering med outbuf
+	je		outImage            # vid nullterminering, skriv ut
+	movq	(%rdx, %r8), $rdx   # lägg nästa värde i, ger kompileringsfel atm
+	incq	%r8                 # öka counter
+	call    getTextLoop
     
