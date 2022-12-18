@@ -7,38 +7,39 @@ Outcounter: .long 0
 	.global	main
 main:
 	pushq	$0
-	movq    $Incounter, %r8		# Incounter till register r8 
-	movq	$outbuf, %rbx
+   
 	call 	inImage # camelcase inImage
+    call    getInt
+    call    outImage
 inImage:
+	leaq	Incounter,	%rbx
+	movq	$0,%rbx
 	movq	$inbuf, %rdi
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-	movq	$inbuf,%rdi
-	pushq	%r8 				# pushar ett register istället för label 'counter' 
+    movq    $inbuf,%rdx
+    movq    $Incounter,%rax
+	movzbq  (%rdx,%rax,1),%r10
+	cmpq	$32, %r10
+	je		continueloop
+	cmpq	$43, %r10
+	je		continueloop
+	cmpq	$45, %r10
+	je		continueloop
 	call	checkifInt
 checkifInt:
-	popq	%rsi
-	movq	(%rdi,%rsi),%rdi
-	cmpq	$32, %rdi
-	je		continueloop
-	cmpq	$43, %rdi
-	je		continueloop
-	cmpq	$45, %rdi
-	je		continueloop
-	cmpq	$48, %rdi
+	cmpq	$48, %r10
 	jle		checkifnumber
-	movq	%r8, %r9			# kopiera antal tecken till register r9
-	call 	endloop
 checkifnumber:
-	cmpq	$57, %rdi
+	cmpq	$57, %r10
 	jle		continueloop
 continueloop:
-	pushq	%rdi
+	movq	$outbuf,%r8
+	movq	%rdi,(%r8,%rbx,8)
 	incq	%r8 				# ökar och pushar (?) registret som pekar på counter för dessa två rader
-	pushq	%r8
+	incq	%rbx
 	call	checkifInt
 
 getText:
@@ -85,10 +86,12 @@ largerthanzero:
 	call 	setInPos
 	
 outImage:
-    movq    %rsi, %rdi
-    xorq    %rax, %rax				# behövs nollställning här också?
+    movq    $inbuf, %rdi
+    movq    $5, %rsi
+    movq    stdout,%rdx
     call    puts
-    ret
+    leaq	Outcounter,	%rbx
+	movq	$0,%rbx
 
 putInt:
     movq    $outbuf,%rdx
