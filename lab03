@@ -116,7 +116,7 @@ putInt:
 #    ret
 
 # ej fungerande rutin för putText
-# måste även lägga till 
+# var lägga inbuf för att samtidigt kunna skriva head-/endMsg? 
 putText:
     movq    $outbuf,%rsi		# lägg outbuf i rsi
     movq    $Outcounter,%rax		# outcounter i %rax
