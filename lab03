@@ -102,37 +102,21 @@ putInt:
 	je		inImage
 	movq	(%rdx,%r8),%rdi 	# tar nuvarande bokstav
 	incq	%r8					#  ökar med 1
-	
-# fungerande putText för headMsg tsm med outImage, headMsg i %rdi.
-# lägga till: lägg till from aktuell pos. i buf till utbuffert.
-#
-#outImage:
-#    movq    %rsi,%rdi
-#    call    puts
-#    ret
-#putText:
-#    movq    $outbuf,%rsi
-#    movq    %rdi, %rsi
-#    ret
 
-# ej fungerande rutin för putText
-# var lägga inbuf för att samtidigt kunna skriva head-/endMsg? 
 putText:
-    movq    $outbuf,%rsi		# lägg outbuf i rsi
-    movq    $Outcounter,%rax		# outcounter i %rax
-    movzbq  (%rdi,%rax,1),%rsi          # rdi = buf/msg
-    cmpq    $0, %rsi			# om tom eller nullterm, gå till outimage
-    je      outImage
-    call    putTextLoop			# loop för att lägga till inbuf from aktuell pos. till utbuf
-    movq    %rax, %r8                   # spara aktuell position
-    ret
+    movq    $outbuf,%rsi
+    movq    $Outcounter,%rax
+    jmp     outBufLoop
+outBufLoop:
+    cmpq    $64, %rax				# om räknare ej 64, lägg till tecken i utbuffert
+    jne     putTextLoop
+    call    outImage
+    jmp     putTextLoop
 putTextLoop:
-    cmpq    $64, %rax			# jämför räknare med 64 (full)
-    je      outImage
-    movq    (%rdi,%rax,1),%rsi		# lägg aktuellt tecken i rsi (utbuff)
-    incq    %rax			# öka räknare
-    cmpq    $0, %rsi			# om null, skriv ut - annars, kör loop
-    jge     putTextLoop
+    movq    (%rdi,%rax),%rsi			# ger segmentation fault ...
+    incq    %rax
+    cmpq    $0, %rsi
+    jne     outBufLoop
     ret
 
 # samtliga nedan identiska med inbuffert-position, med namn för utbuffert istället
