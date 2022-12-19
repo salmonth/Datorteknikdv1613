@@ -103,29 +103,52 @@ putInt:
 	movq	(%rdx,%r8),%rdi 	# tar nuvarande bokstav
 	incq	%r8					#  ökar med 1
 	
-# fungerande putText för headMsg tsm med outImage.
+# fungerande putText för headMsg tsm med outImage, headMsg i %rdi.
 # lägga till: lägg till from aktuell pos. i buf till utbuffert.
-putText:
-    movq    $outbuf,%rsi
-    movq    %rdi, %rsi
-    ret
+#
+#outImage:
+#    movq    %rsi,%rdi
+#    call    puts
+#    ret
+#putText:
+#    movq    $outbuf,%rsi
+#    movq    %rdi, %rsi
+#    ret
 
 # ej fungerande rutin för putText
+# måste även lägga till 
 putText:
-	movq	$outbuf, %rdx       # lägg outbuf i register rdx
-    movq    $Outcounter, %r8    # lägg conter för utbuffert i r8
-    call    getInPos            # anropar getInPos för att veta startindex (?)
-    movq    %rax, %r8           # Outcounter = Incounter
-    movq	(%rdi, %r8), %rdx   # lägger värde från buf/sträng från startindex mha getInPos i rdx 
-    cmpq	$0,%rdx			    # Ifall ord saknas eller är i slutet är sista tecken \n.
-    je		outImage            # om outbuf är tom, gå till outImage
-    movq	(%rdi, %rax),%rdx   # tar nuvarande bokstav
-	incq	%r8				    # ökar outcounter med 1
-	call	textloop            # loop
-getTextLoop:
-	cmpq	$0, (%rdx)          # jämför nullterminering med outbuf
-	je		outImage            # vid nullterminering, skriv ut
-	movq	(%rdx, %r8), $rdx   # lägg nästa värde i, ger kompileringsfel atm
-	incq	%r8                 # öka counter
-	call    getTextLoop
-    
+    movq    $outbuf,%rsi		# lägg outbuf i rsi
+    movq    $Outcounter,%rax		# outcounter i %rax
+    movzbq  (%rdi,%rax,1),%rsi          # rdi = buf/msg
+    cmpq    $0, %rsi			# om tom eller nullterm, gå till outimage
+    je      outImage
+    call    putTextLoop			# loop för att lägga till inbuf from aktuell pos. till utbuf
+    movq    %rax, %r8                   # spara aktuell position
+    ret
+putTextLoop:
+    cmpq    $64, %rax			# jämför räknare med 64 (full)
+    je      outImage
+    movq    (%rdi,%rax,1),%rsi		# lägg aktuellt tecken i rsi (utbuff)
+    incq    %rax			# öka räknare
+    cmpq    $0, %rsi			# om null, skriv ut - annars, kör loop
+    jge     putTextLoop
+    ret
+
+# samtliga nedan identiska med inbuffert-position, med namn för utbuffert istället
+# vid ändring av syntax för inbuffert-funktioner, ändra här också
+getOutPos:
+    movq	$Outcounter,%rax		# returnerar vad som står i counter
+    ret
+setOutPos:
+    cmpq	$0,%rdi				# kollar ifall det är mindre än noll
+    jl		Outlessthanzero
+    cmpq	$64,%rdi			# kollar ifall det Ã¤r större Ã¤n 64
+    jg		Outlargerthanzero
+    movq	$Outcounter, %rdi	# Ändra värdet på counter
+Outlessthanzero:
+    movq	$0,%rdi 			# rdi blir 0
+    call	setOutPos
+Outlargerthanzero:
+    movq	$64,%rdi			# rdi blir 64
+    call 	setOutPos
