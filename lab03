@@ -12,14 +12,14 @@ main:
     call    getInt
     call    outImage
 inImage:
-	leaq	Incounter,	%rbx
+	leaq	Incounter,	%rbx  # nollställ incounter och ta in input
 	movq	$0,%rbx
 	movq	$inbuf, %rdi
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-	movq	$inbuf, %rdi
+	movq	$inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
 	movq    $Incounter,%rax
 	movzx   (%rax),%r9d
    	movq    (%rdi,%r9,8), %r10  
@@ -31,18 +31,22 @@ getInt:
 	je		continueloop
 	call	checkifInt
 checkifInt:
-	cmpq	$48, %r10
-	jle		checkifnumber
+	cmpq	$48, %r10	# Kollar ifall r10 är en siffra
+	jle		checkifnumber	
+	call     endloop
 checkifnumber:
 	cmpq	$57, %r10
 	jle		continueloop
+	call     endloop
 continueloop:
-	movq	$outbuf,%r8
-	movq	%rdi,(%r8,%rbx,8)
-	incq	%r8 				# ökar och pushar (?) registret som pekar på counter för dessa två rader
-	incq	%rbx
+	movq	$outbuf,%r8     # Lägger till nuvarande tal i outbuf.
+	movq    $Outcounter,%rax
+	movq	%r10,(%r8,%rax,8)
+	incq	%rax            # ökar counter med ett
 	call	checkifInt
-
+endloop:
+   	movq	$outbuf,%rax 
+	
 getText:
 	movq    $inbuf, %rdi  		# kopiera/flytta buf till rdi
 	call    inImage     		# anropar inImage för att ta emot sträng och nollställa position i buf (counter)
@@ -56,13 +60,7 @@ addText:
 	call	addText				# lägg till nästa tecken i buf
 
 
-endloop:
-	movq	(%rsi), %rbx		# flyttar aktuellt tal/tecken till format (rbx)
-	popq    %rsi        		# popar rsi från stacken
-	decq    %r9         		# minskar r9 med 1
-	cmpq    $0,%r9      		# jämför med 0 (slut på antal tecken)
-	jge     endloop	
-
+  
 getChar:
 	movq    $inbuf, %rdi 		# flyttar buf till rdi
 	cmpq	$0,%rdi				# Ifall ord saknas eller är i slutet är sista tecken \n.
