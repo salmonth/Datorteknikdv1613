@@ -19,10 +19,10 @@ inImage:
 	movq	stdin, %rdx
 	call	fgets
 getInt:
- 	movq	$inbuf, %rdi
+	movq	$inbuf, %rdi
 	movq    $Incounter,%rax
-	movzx   (%rax),%r10d
-	movb    %r10b,(%rdi)
+	movzx   (%rax),%r9d
+   	movq    (%rdi,%r9,8), %r10  
 	cmpq	$32, %r10
 	je		continueloop
 	cmpq	$43, %r10
