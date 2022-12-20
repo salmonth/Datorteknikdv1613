@@ -19,10 +19,10 @@ inImage:
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-    	movq    $inbuf,%rdx
-    	movq    $Incounter,%rax
-	movq  (%rdx,%rax,1),%r10  # får error message. denna ska ta aktuell position för ordet.
-	                            #Ex ifall ordet är hej och counter1 ska bokstaven vara e
+ 	movq	$inbuf, %rdi
+	movq    $Incounter,%rax
+	movzx   (%rax),%r10d
+	movb    %r10b,(%rdi)
 	cmpq	$32, %r10
 	je		continueloop
 	cmpq	$43, %r10
