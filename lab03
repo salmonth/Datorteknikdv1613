@@ -19,10 +19,9 @@ inImage:
 	movq	stdin, %rdx
 	call	fgets
 getInt:
-	movq	$inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
-	movq    $Incounter,%rax
-	movzx   (%rax),%r9d
-   	movq    (%rdi,%r9,8), %r10  
+	leaq	inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
+	movq    Incounter,%rax
+    	movzbq  (%rdi,%rax,1), %r10
 	cmpq	$32, %r10
 	je		continueloop
 	cmpq	$43, %r10
