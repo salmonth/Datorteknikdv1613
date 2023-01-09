@@ -84,12 +84,12 @@ largerthanzero:
 	call 	setInPos
 	
 outImage:
-    movq    $inbuf, %rdi
-    movq    $5, %rsi
-    movq    stdout,%rdx
-    call    puts
-    leaq	Outcounter,	%rbx
-	movq	$0,%rbx
+	leaq 	$outbuf, %rdi
+	movq	$Outcounter, %rax
+	movb	$0, (%rdi, %rax)    	# nullterminering av sträng
+    	call    puts                	# anropar puts, rdi pekar på outbuf
+	movq	$0, Outcounter      	# nollställ Outcounter
+	ret
 
 putInt:
     movq    $outbuf,%rdx
@@ -101,20 +101,28 @@ putInt:
 	incq	%r8					#  ökar med 1
 
 putText:
-    movq    $outbuf,%rsi
-    movq    $Outcounter,%rax
-    jmp     outBufLoop
+	movq    $outbuf, %rsi
+	movq	$0, %r9     		# r9 = index för textparameter
+	movq    Outcounter, %rax    	# rax = index outcounter
 outBufLoop:
-    cmpq    $64, %rax				# om räknare ej 64, lägg till tecken i utbuffert
-    jne     putTextLoop
-    call    outImage
-    jmp     putTextLoop
+	cmpq	$64, %rax
+	jne     putTextLoop
+	pushq	%rdi			# pushar rdi, rdi är input parameter med text
+	pushq	%rax            	# rax = outcounter
+	call    outImage
+	popq 	%rax
+	popq 	%rdi
 putTextLoop:
-    movq    (%rdi,%rax),%rsi			# ger segmentation fault ...
-    incq    %rax
-    cmpq    $0, %rsi
-    jne     outBufLoop
-    ret
+	movb    (%rdi,%r9), %r10b       # itererar rdi, r10b är nästa char (8 bit)
+	cmp	$0, %r10b               # compare, 0 = slut på nullterm. sträng
+	je	putTextEnd
+	movb 	%r10b, (%rsi, %rax)     # lägg char i utbuffert
+	incq	%r9                     # öka index i text
+	incq	%rax                    # öka index i utbuffert
+	jne     outBufLoop
+putTextEnd:
+	movq 	%rax, Outcounter        # uppdatera outcounter
+	ret
 
 # samtliga nedan identiska med inbuffert-position, med namn för utbuffert istället
 # vid ändring av syntax för inbuffert-funktioner, ändra här också
