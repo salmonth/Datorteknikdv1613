@@ -1,6 +1,6 @@
 .data
 inbuf:	.space	64
-outbuf: .asciz "%d\n"
+outbuf: .space	64			# outbuf ska också vara reserverat utrymme, nullterm. sker i in/outImage
 Incounter: .long 0
 Outcounter: .long 0
 	.text
