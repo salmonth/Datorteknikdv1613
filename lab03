@@ -79,10 +79,10 @@ setInPos:
 	movq	$Incounter, %rdi	# ändra värdet på counter
 lessthanzero:
 	movq	$0,%rdi 			# rdi blir 0
-	call	setInPos
+	ret
 largerthanzero:
 	movq	$64,%rdi			# rdi blir 64
-	call 	setInPos
+	ret
 	
 outImage:
 	leaq 	$outbuf, %rdi
@@ -138,7 +138,31 @@ setOutPos:
     movq	$Outcounter, %rdi	# Ändra värdet på counter
 Outlessthanzero:
     movq	$0,%rdi 			# rdi blir 0
-    call	setOutPos
+    ret
 Outlargerthanzero:
     movq	$64,%rdi			# rdi blir 64
-    call 	setOutPos
+    ret
+
+
+putChar:
+	movq    $outbuf, %rsi
+	movq    Outcounter, %rax    	# rax = index outcounter
+outBufLoop:
+	cmpq	$64, %rax
+	jne     putCharLoop
+	pushq	%rdi			# pushar rdi, rdi är input parameter med text
+	pushq	%rax            	# rax = outcounter
+	call    outImage
+	popq 	%rax
+	popq 	%rdi
+putCharLoop:
+	cmp	$0, %rdi               # compare, 0 = slut på nullterm. sträng
+	je	putTextEnd
+	movb 	%rdi, (%rsi, %rax)     # lägg char i utbuffert
+	incq	%rax                    # öka index i utbuffert
+	
+putTextEnd:
+	movq 	%rax, Outcounter        # uppdatera outcounter
+	ret
+	
+	
