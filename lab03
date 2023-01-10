@@ -77,6 +77,7 @@ setInPos:
 	cmpq	$64,%rdi			# kollar ifall det är större än 64
 	jg		largerthanzero
 	movq	$Incounter, %rdi	# ändra värdet på counter
+	ret
 lessthanzero:
 	movq	$0,%rdi 			# rdi blir 0
 	ret
