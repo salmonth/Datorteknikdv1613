@@ -12,8 +12,8 @@ main:
     call    getInt
     call    outImage
 inImage:
-	leaq 	$inbuf, %rdi
-	movq	$Incounter, %rax
+	leaq 	inbuf, %rdi
+	movq	Incounter, %rax
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
@@ -85,8 +85,8 @@ largerthanzero:
 	ret
 	
 outImage:
-	leaq 	$outbuf, %rdi
-	movq	$Outcounter, %rax
+	leaq 	outbuf, %rdi
+	movq	Outcounter, %rax
 	movb	$0, (%rdi, %rax)    	# nullterminering av sträng
     	call    puts                	# anropar puts, rdi pekar på outbuf
 	movq	$0, Outcounter      	# nollställ Outcounter
