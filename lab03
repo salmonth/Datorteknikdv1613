@@ -91,15 +91,29 @@ outImage:
     	call    puts                	# anropar puts, rdi pekar på outbuf
 	movq	$0, Outcounter      	# nollställ Outcounter
 	ret
-
 putInt:
-    movq    $outbuf,%rdx
-    movq    $Outcounter,%r8
-    movq	(%rdx, %r8), %rdx
-    cmpq	$0,%rdx				# Ifall ord saknas eller är i slutet är sista tecken \n.
-	je		inImage
-	movq	(%rdx,%r8),%rdi 	# tar nuvarande bokstav
-	incq	%r8					#  ökar med 1
+	movq    $outbuf, %rsi
+	movq	$0, %r9     		# r9 = index för textparameter
+	movq    Outcounter, %rax    	# rax = index outcounter
+outIntLoop:
+	cmpq	$64, %rax
+	jne     putIntLoop
+	pushq	%rdi			# pushar rdi, rdi är input parameter med text
+	pushq	%rax            	# rax = outcounter
+	call    outImage
+	popq 	%rax
+	popq 	%rdi
+putIntLoop:
+	movb    (%rdi,%r9), %r10b       # itererar rdi, r10b är nästa char (8 bit)
+	cmp	$0, %r10b               # compare, 0 = slut på nullterm. sträng
+	je	putIntEnd
+	movb 	%r10b, (%rsi, %rax)     # lägg char i utbuffert
+	incq	%r9                     # öka index i text
+	incq	%rax                    # öka index i utbuffert
+	jne     outIntLoop
+putIntEnd:
+	movq 	%rax, Outcounter        # uppdatera outcounter
+	ret
 
 putText:
 	movq    $outbuf, %rsi
