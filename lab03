@@ -67,14 +67,15 @@ getChar:
 	cmpq    $64,%rax
 	je     getgetChar
 	movb    (%rdi,%rdx), %r10b# itererar rdi, r10b är nästa char (8 bit
+
 getInPos:
-	movq	Outcounter,%rax		# returnerar vad som står i counter
+	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
     	ret
 setInPos:
 	cmpq	$0,%rdi				# kollar ifall det är mindre än noll
-	jl		lessthanzero
+	jl	lessthanzero
 	cmpq	$64,%rdi			# kollar ifall det är större än 64
-	jg		largerthanzero
+	jg	largerthanzero
 	movq    %rdi, Outcounter
 	ret
 lessthanzero:
