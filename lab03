@@ -12,12 +12,13 @@ main:
     call    getInt
     call    outImage
 inImage:
-	leaq	Incounter,	%rbx  # nollställ incounter och ta in input
-	movq	$0,%rbx
-	movq	$inbuf, %rdi
+	leaq 	$inbuf, %rdi
+	movq	$Incounter, %rax
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
+	movq	$0, Intcounter      	# nollställ Outcounter
+	ret
 getInt:
 	leaq	inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
 	movq    Incounter,%rax
