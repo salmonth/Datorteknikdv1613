@@ -160,6 +160,7 @@ Outlargerthanzero:
 
 putChar:
 	movq    $outbuf, %rsi
+	movq    $0, %r9
 	movq    Outcounter, %rax    	# rax = index outcounter
 outBufLoop:
 	cmpq	$64, %rax
@@ -170,12 +171,12 @@ outBufLoop:
 	popq 	%rax
 	popq 	%rdi
 putCharLoop:
-	cmp	$0, %rdi               # compare, 0 = slut på nullterm. sträng
-	je	putTextEnd
-	movb 	%rdi, (%rsi, %rax)     # lägg char i utbuffert
+    	movb    (%rdi,%r9), %r10b
+	cmp	$0, %r10b
+	je	putCharEnd
+	movb 	%r10b, (%rsi, %rax)     # lägg char i utbuffert
 	incq	%rax                    # öka index i utbuffert
-	
-putTextEnd:
+putCharEnd:
 	movq 	%rax, Outcounter        # uppdatera outcounter
 	ret
 	
