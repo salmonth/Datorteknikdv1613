@@ -17,7 +17,7 @@ inImage:
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
-	movq	$0, Intcounter      	# nollställ Outcounter
+	movq	$0, Incounter      	# nollställ Outcounter
 	ret
 getInt:
 	leaq	inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
