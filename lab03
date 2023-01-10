@@ -62,12 +62,11 @@ addText:
 
   
 getChar:
-	movq    $inbuf, %rdi 		# flyttar buf till rdi
-	cmpq	$0,%rdi				# Ifall ord saknas eller är i slutet är sista tecken \n.
-	je		inImage
-	movq	(%rdi,%r8),%rax 	# tar nuvarande bokstav
-	incq	%r8					#  ökar med 1
-
+	movq    $inbuf, %rsi 		# flyttar buf till rdi
+	movq	Incounter,%rdx		# returnerar vad som står i counter   
+	cmpq    $64,%rax
+	je     getgetChar
+	movb    (%rdi,%rdx), %r10b# itererar rdi, r10b är nästa char (8 bit
 getInPos:
 	movq	Outcounter,%rax		# returnerar vad som står i counter
     	ret
