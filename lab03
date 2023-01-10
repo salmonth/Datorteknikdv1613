@@ -139,17 +139,16 @@ putTextEnd:
 	movq 	%rax, Outcounter        # uppdatera outcounter
 	ret
 
-# samtliga nedan identiska med inbuffert-position, med namn för utbuffert istället
-# vid ändring av syntax för inbuffert-funktioner, ändra här också
 getOutPos:
-    movq	$Outcounter,%rax		# returnerar vad som står i counter
+    movq	Outcounter,%rax		# returnerar vad som står i counter
     ret
 setOutPos:
     cmpq	$0,%rdi				# kollar ifall det är mindre än noll
     jl		Outlessthanzero
     cmpq	$64,%rdi			# kollar ifall det Ã¤r större Ã¤n 64
     jg		Outlargerthanzero
-    movq	$Outcounter, %rdi	# Ändra värdet på counter
+    movq	%rdi, Outcounter	# Ändra värdet på counter
+    ret
 Outlessthanzero:
     movq	$0,%rdi 			# rdi blir 0
     ret
