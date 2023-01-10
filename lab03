@@ -31,7 +31,7 @@ getInt:
 	call	checkifInt
 checkifInt:
 	cmpq	$48, %r10	# Kollar ifall r10 är en siffra
-	jle		checkifnumber	
+	jge		checkifnumber	
 	call     endloop
 checkifnumber:
 	cmpq	$57, %r10
