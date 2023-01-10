@@ -69,14 +69,14 @@ getChar:
 	incq	%r8					#  ökar med 1
 
 getInPos:
-	movq	$Incounter,%rax		# returnerar vad som står i counter
-
+	movq	Outcounter,%rax		# returnerar vad som står i counter
+    	ret
 setInPos:
 	cmpq	$0,%rdi				# kollar ifall det är mindre än noll
 	jl		lessthanzero
 	cmpq	$64,%rdi			# kollar ifall det är större än 64
 	jg		largerthanzero
-	movq	$Incounter, %rdi	# ändra värdet på counter
+	movq    %rdi, Outcounter
 	ret
 lessthanzero:
 	movq	$0,%rdi 			# rdi blir 0
