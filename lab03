@@ -118,12 +118,12 @@ putIntEnd:
 
 putText:
 	movq    $outbuf, %rsi
-	movq	$0, %r9     		# r9 = index för textparameter
-	movq    Outcounter, %rax    	# rax = index outcounter
+	call	getOutPos		# returvärde = %rax(aktuell position i utbuffert)
+	movq	%rax, %r9		# kopierar aktuell position till %r9
 outBufLoop:
 	cmpq	$64, %rax
 	jne     putTextLoop
-	pushq	%rdi			# pushar rdi, rdi är input parameter med text
+	pushq	%rdi			# pushar rdi, rdi är input parameter med text/inbuffert
 	pushq	%rax            	# rax = outcounter
 	call    outImage
 	popq 	%rax
