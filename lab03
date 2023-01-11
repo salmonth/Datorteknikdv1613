@@ -65,11 +65,9 @@ getChar:
 	movq    $inbuf, %rsi 		# flyttar buf till rdi
 	movq	Incounter,%rdx		# returnerar vad som står i counter   
 	cmpq    $64,%rax
-	je     getgetChar
+	je     inImage
 	movb    (%rdi,%rdx), %r10b# itererar rdi, r10b är nästa char (8 bit
-getgetChar:
-	call inImage
-	ret
+
 getInPos:
 	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
     	ret
