@@ -140,44 +140,42 @@ putTextEnd:
 	movq 	%rax, Outcounter        # uppdatera outcounter
 	ret
 
-getOutPos:
-    movq	Outcounter,%rax		# returnerar vad som står i counter
-    ret
-setOutPos:
-    cmpq	$0,%rdi				# kollar ifall det är mindre än noll
-    jl		Outlessthanzero
-    cmpq	$64,%rdi			# kollar ifall det Ã¤r större Ã¤n 64
-    jg		Outlargerthanzero
-    movq	%rdi, Outcounter	# Ändra värdet på counter
-    ret
-Outlessthanzero:
-    movq	$0,%rdi 			# rdi blir 0
-    ret
-Outlargerthanzero:
-    movq	$64,%rdi			# rdi blir 64
-    ret
-
-
 putChar:
-	movq    $outbuf, %rsi
-	movq    $0, %r9
-	movq    Outcounter, %rax    	# rax = index outcounter
-outBufLoop:
+	movq	$outbuf, %rsi
+	call	getOutPos
+	movq	%rax, %r9
+outCharLoop:
 	cmpq	$64, %rax
-	jne     putCharLoop
-	pushq	%rdi			# pushar rdi, rdi är input parameter med text
-	pushq	%rax            	# rax = outcounter
-	call    outImage
-	popq 	%rax
-	popq 	%rdi
+	jne	putCharLoop
+	pushq	%rdi
+	pushq	%rax
+	call	outImage
+	popq	%rax
+	popq	%rdi
 putCharLoop:
-    	movb    (%rdi,%r9), %r10b
+	movb	(%rdi,%r9), %r10b
 	cmp	$0, %r10b
 	je	putCharEnd
-	movb 	%r10b, (%rsi, %rax)     # lägg char i utbuffert
-	incq	%rax                    # öka index i utbuffert
+	movb	%r10b, (%rsi, %rax)
+	incq	%rax
 putCharEnd:
-	movq 	%rax, Outcounter        # uppdatera outcounter
+	movq	%rax, Outcounter
 	ret
-	
-	
+
+getOutPos:
+    	movq	Outcounter,%rax		# returnerar vad som står i counter
+    	ret
+
+setOutPos:
+    	cmpq	$0,%rdi				# kollar ifall det är mindre än noll
+    	jl	Outlessthanzero
+    	cmpq	$64,%rdi			# kollar ifall det Ã¤r större Ã¤n 64
+    	jg	Outlargerthanzero
+    	movq	%rdi, Outcounter	# Ändra värdet på counter
+    	ret
+Outlessthanzero:
+    	movq	$0,%rdi 			# rdi blir 0
+    	ret
+Outlargerthanzero:
+    	movq	$64,%rdi			# rdi blir 64
+    	ret	
