@@ -94,8 +94,8 @@ outImage:
 	ret
 putInt:
 	movq    $outbuf, %rsi
-	movq	$0, %r9     		# r9 = index för textparameter
-	movq    Outcounter, %rax    	# rax = index outcounter
+	call	getOutPos
+	movq	%rax, %r9
 outIntLoop:
 	cmpq	$64, %rax
 	jne     putIntLoop
