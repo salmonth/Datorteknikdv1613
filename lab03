@@ -23,6 +23,7 @@ getInt:
 	leaq	inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
 	movq    Incounter,%rax
     movzbq  (%rdi,%rax), %r10
+    movq	$0,%r9
 	cmpq	$32, %r10
 	je		continueloop
 	cmpq	$43, %r10
@@ -43,7 +44,8 @@ continueloop:
 	movq    Outcounter,%rax
 	movq	%r10,(%r8,%rax,8) Ska ta värdet i r10 o lägga in i outbuf på aktuell position
 	incq	%rax            # ökar counter med ett
-	movzbq  (%rdi,%rax), %r10
+	incq	%r9
+	movzbq  (%rdi,%r9), %r10
 	call	checkifInt
 	
 	
