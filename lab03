@@ -22,7 +22,7 @@ inImage:
 getInt:
 	leaq	inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
 	movq    Incounter,%rax
-    	movzbq  (%rdi,%rax,1), %r10
+    movzbq  (%rdi,%rax), %r10
 	cmpq	$32, %r10
 	je		continueloop
 	cmpq	$43, %r10
@@ -33,19 +33,19 @@ getInt:
 checkifInt:
 	cmpq	$48, %r10	# Kollar ifall r10 är en siffra
 	jge		checkifnumber	
-	call     endloop
+	ret
 checkifnumber:
 	cmpq	$57, %r10
 	jle		continueloop
-	call     endloop
+	ret
 continueloop:
 	movq	$outbuf,%r8     # Lägger till nuvarande tal i outbuf.
-	movq    $Outcounter,%rax
+	movq    Outcounter,%rax
 	movq	%r10,(%r8,%rax,8)
 	incq	%rax            # ökar counter med ett
+	movzbq  (%rdi,%rax), %r10
 	call	checkifInt
-endloop:
-   	movq	$outbuf,%rax 
+	
 	
 getText:
 	movq    $inbuf, %rdi  		# kopiera/flytta buf till rdi
