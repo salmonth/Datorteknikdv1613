@@ -41,7 +41,7 @@ checkifnumber:
 continueloop:
 	movq	$outbuf,%r8     # Lägger till nuvarande tal i outbuf.
 	movq    Outcounter,%rax
-	movq	%r10,(%r8,%rax,8)
+	movq	%r10,(%r8,%rax,8) Ska ta värdet i r10 o lägga in i outbuf på aktuell position
 	incq	%rax            # ökar counter med ett
 	movzbq  (%rdi,%rax), %r10
 	call	checkifInt
