@@ -19,34 +19,80 @@ inImage:
 	call	fgets
 	movq	$0, Incounter      	# nollställ Incounter
 	ret
+
+# har inte hunnit testa getInt än, men den visar hur jag har tänkt.
+
 getInt:
-	leaq	inbuf, %rdi  # gör r10 till inbufs nuvarande värde.
+	movq    inbuf, %rcx
 	movq    Incounter,%rax
-    movzbq  (%rdi,%rax), %r10
-    movq	$0,%r9
-	cmpq	$32, %r10
-	je		continueloop
-	cmpq	$43, %r10
-	je		continueloop
-	cmpq	$45, %r10
-	je		continueloop
-	call	checkifInt
-checkifInt:
-	cmpq	$48, %r10	# Kollar ifall r10 är en siffra
-	jge		checkifnumber	
+	movq    %rax, %r9
+	movq    $0, %r11		# r11 = räknare för antal siffror
+	movq	$0, %r8			# %r8 = flagga för negativt eller positivt tal, 1 = negativt 0 = positivt
+inbufloop:
+	cmpq    $64, %rax
+	jne     getIntLoop
+	pushq   %rdi
+	pushq   %rax
+	call    outImage
+	popq    %rax
+	popq    %rdi
+getIntloop:
+	movb    (%rdi, %r9), %r10b
+	cmp     $0, %r10b
+	je      getIntEnd
+	cmp     $32, %r10b
+	jne     checkNegative
+	incq    %r9
+	incq    %rax
+	je      inbufloop
+checkNegative:
+	cmp     $'-', %r10b
+	jne     checkPlus
+	movq	$1, %r8
+	incq    %r9
+	incq    %rax
+	je      getNumber
+checkPlus:
+	cmp     $'+', %r10b
+	jne     getNumber
+	movq	$0, %r8
+	incq    %r9
+	incq    %rax
+getNumber:
+	cmpq    $64, %rax
+	jne     getPositiveLoop
+	pushq   %rax
+	pushq   %rdi
+	call    outImage
+	popq    %rdi
+	popq    %rax
+getNumberLoop:
+	movb    (%rdi, %r9), %r10b
+	cmp     $'9', %r10b
+	jg      getIntEnd
+	cmp     $'0', %r10b
+	jl      getIntEnd
+	movzbq	%r10b, %r10
+	sub	%r10, $'0', %r12			# r12 = siffra som ska konverteras till heltal
+	cmpq	$0, %r11
+	jg	multiplyNumber
+	addq	%r12, %rbx
+	je	nextNumber
+multiplyNumber:
+	imulq	$10, %rbx
+	addq	%r12, %rbx
+nextNumber:
+	incq    %rax
+	incq    %r9
+	incq	%r11
+	jmp     getNumber
+getIntEnd:
+	cmpq	$1, %r8
+	jne	getIntReturn
+	negq	%rbx
+getIntReturn:
+	movq	%rax, Incounter
 	ret
-checkifnumber:
-	cmpq	$57, %r10
-	jle		continueloop
-	ret
-continueloop:
-	movq	$outbuf,%r8     # Lägger till nuvarande tal i outbuf.
-	movq    Outcounter,%rax
-	movq	%r10,(%r8,%rax,8) Ska ta värdet i r10 o lägga in i outbuf på aktuell position
-	incq	%rax            # ökar counter med ett
-	incq	%r9
-	movzbq  (%rdi,%r9), %r10
-	call	checkifInt
 	
 	
 getText:
