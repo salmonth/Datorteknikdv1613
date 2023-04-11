@@ -23,11 +23,12 @@ inImage:
 # har inte hunnit testa getInt än, men den visar hur jag har tänkt.
 
 getInt:
-	movq    inbuf, %rcx
-	movq    Incounter,%rax
+   	movq    inbuf, %rcx
+ 	movq    Incounter,%rax
 	movq    %rax, %r9
-	movq    $0, %r11		# r11 = räknare för antal siffror
-	movq	$0, %r8			# %r8 = flagga för negativt eller positivt tal, 1 = negativt 0 = positivt
+    	movq    $0, %r11
+	movq	$0, %r8
+    	movq    $0, %rbx
 inbufloop:
 	cmpq    $64, %rax
 	jne     getIntLoop
@@ -36,7 +37,7 @@ inbufloop:
 	call    outImage
 	popq    %rax
 	popq    %rdi
-getIntloop:
+getIntLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $0, %r10b
 	je      getIntEnd
@@ -60,7 +61,7 @@ checkPlus:
 	incq    %rax
 getNumber:
 	cmpq    $64, %rax
-	jne     getPositiveLoop
+	jne     getNumberLoop
 	pushq   %rax
 	pushq   %rdi
 	call    outImage
@@ -73,7 +74,8 @@ getNumberLoop:
 	cmp     $'0', %r10b
 	jl      getIntEnd
 	movzbq	%r10b, %r10
-	sub	%r10, $'0', %r12			# r12 = siffra som ska konverteras till heltal
+	subq	$'0', %r10
+	movq	%r10, %r12
 	cmpq	$0, %r11
 	jg	multiplyNumber
 	addq	%r12, %rbx
