@@ -20,7 +20,7 @@ inImage:
 	movq	$0, Incounter      	# nollställ Incounter
 	ret
 
-# har inte hunnit testa getInt än, men den visar hur jag har tänkt.
+# getInt fungerar inte riktigt som tänkt atm, felsöker.
 
 getInt:
    	movq    inbuf, %rcx
@@ -34,14 +34,14 @@ inbufloop:
 	jne     getIntLoop
 	pushq   %rdi
 	pushq   %rax
-	call    outImage
+	call    inImage
 	popq    %rax
 	popq    %rdi
 getIntLoop:
 	movb    (%rdi, %r9), %r10b
-	cmp     $0, %r10b
+	cmp     $'', %r10b
 	je      getIntEnd
-	cmp     $32, %r10b
+	cmp     $' ', %r10b
 	jne     checkNegative
 	incq    %r9
 	incq    %rax
@@ -64,14 +64,14 @@ getNumber:
 	jne     getNumberLoop
 	pushq   %rax
 	pushq   %rdi
-	call    outImage
+	call    inImage
 	popq    %rdi
 	popq    %rax
 getNumberLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $'9', %r10b
 	jg      getIntEnd
-	cmp     $'0', %r10b
+	cmp     $'0', %r10b			# hoppar just nu felaktigt till getIntEnd, behöver lösas
 	jl      getIntEnd
 	movzbq	%r10b, %r10
 	subq	$'0', %r10
