@@ -113,10 +113,13 @@ addText:
   
 getChar:
 	movq    $inbuf, %rsi 		# flyttar buf till rdi
-	movq	Incounter,%rdx		# returnerar vad som står i counter   
-	cmpq    $64,%rax
-	je     inImage
-	movb    (%rdi,%rdx), %r10b# itererar rdi, r10b är nästa char (8 bit
+	movq	Incounter,%rdx		# returnerar vad som står i counter
+	movq    (%rsi, %rdx), %rax
+	cmpq    0,%rax
+	je      inImage
+	cmpq    '64',%rdx
+	je      inImage
+	incq    %rdx
 
 getInPos:
 	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
