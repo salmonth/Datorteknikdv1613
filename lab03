@@ -98,16 +98,19 @@ getIntReturn:
 	
 	
 getText:
-	movq    $inbuf, %rdi  		# kopiera/flytta buf till rdi
-	call    inImage     		# anropar inImage för att ta emot sträng och nollställa position i buf (counter)
-	call    addText   			# subrutin för att lägga till text till format
-addText:
-	movq	(%rdi, %r8), %rdi
-	pushq	%rdi	
-	incq	%r8					# aktuell position
-	cmpq	%r8, %r9			# jämför aktuell position med parameter 1
-	je		endloop				# om lika, gå till endloop för avslut
-	call	addText				# lägg till nästa tecken i buf
+    movq    0,%rax
+    movq    $inbuf, %rdi 		# flyttar buf till rdi
+	movq	Incounter,%rdx		# returnerar vad som står i counter
+	movb    (%rdi, %rsi), %r10b
+	cmpq    %rax,%rsi
+	jne     textLoop
+	ret
+textLoop:
+	movb    (%rdi, %rsi), %r10b
+    cmpq    %rax,%rsi
+	je      ret
+	incq    rax
+	call    textLoop
 
 
   
