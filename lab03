@@ -13,7 +13,6 @@ main:
     call    outImage
 inImage:
 	leaq 	inbuf, %rdi
-	movq	Incounter, %rax
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
@@ -28,7 +27,7 @@ inImage:
 #	
 
 getInt:
-	movq    $inbuf, %rcx
+	movq    $inbuf, %rdi
 	movq    Incounter,%rax
 	movq    $0, %r9
 	movq	$0, %r8			# %r8 = flagga för negativt eller positivt tal
@@ -37,14 +36,17 @@ inbufloop:
 	cmpq    $64, %rax
 	jne     getIntLoop
 	pushq   %rdi
-	pushq   %rax
 	call    inImage
-	popq    %rax
 	popq    %rdi
 getIntLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $'', %r10b
-	je      getIntEnd
+	jne	checkBlank
+	pushq	%rdi
+	call	inImage
+	popq	%rdi
+checkBlank:
+	movb    (%rdi, %r9), %r10b
 	cmp     $' ', %r10b
 	jne     checkNegative
 	incq    %r9
@@ -66,11 +68,9 @@ checkPlus:
 getNumber:
 	cmpq    $64, %rax
 	jne     getNumberLoop
-	pushq   %rax
 	pushq   %rdi
 	call    inImage
 	popq    %rdi
-	popq    %rax
 getNumberLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $'9', %r10b
