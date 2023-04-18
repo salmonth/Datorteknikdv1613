@@ -21,10 +21,7 @@ inImage:
 
 #
 # getInt gör nu som den ska för kontroll av siffror samt multiplikation och konvertering.
-# todo:
-#	kontrollera namn på labels så att de inte krockar med andra i vår kod
-#	testa tsm med inImage för ev justering eller byten av register
-#	
+#
 
 getInt:
 	movq    $inbuf, %rdi
