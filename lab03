@@ -1,6 +1,6 @@
 .data
 inbuf:	.space	64
-outbuf: .space	64			# outbuf ska också vara reserverat utrymme, nullterm. sker i in/outImage
+outbuf: .space	64
 Incounter: .long 0
 Outcounter: .long 0
 	.text
@@ -17,18 +17,22 @@ inImage:
 	movq	$5, %rsi
 	movq	stdin, %rdx
 	call	fgets
-	movq	$0, Incounter      	# nollställ Incounter
+	movq	$0, Incounter
 	ret
 
-# getInt fungerar inte riktigt som tänkt atm, felsöker.
+#
+# getInt gör nu som den ska för kontroll av siffror samt multiplikation och konvertering.
+# todo:
+#	kontrollera namn på labels så att de inte krockar med andra i vår kod
+#	testa tsm med inImage för ev justering eller byten av register
+#	
 
 getInt:
-   	movq    inbuf, %rcx
- 	movq    Incounter,%rax
-	movq    %rax, %r9
-    	movq    $0, %r11
-	movq	$0, %r8
-    	movq    $0, %rbx
+	movq    $inbuf, %rcx
+	movq    Incounter,%rax
+	movq    $0, %r9
+	movq	$0, %r8			# %r8 = flagga för negativt eller positivt tal
+	movq    $0, %rbx		# rbx = register för heltal som ska returneras
 inbufloop:
 	cmpq    $64, %rax
 	jne     getIntLoop
@@ -71,25 +75,19 @@ getNumberLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $'9', %r10b
 	jg      getIntEnd
-	cmp     $'0', %r10b			# hoppar just nu felaktigt till getIntEnd, behöver lösas
+	cmp     $'0', %r10b
 	jl      getIntEnd
 	movzbq	%r10b, %r10
 	subq	$'0', %r10
-	movq	%r10, %r12
-	cmpq	$0, %r11
-	jg	multiplyNumber
-	addq	%r12, %rbx
-	je	nextNumber
-multiplyNumber:
-	imulq	$10, %rbx
+	movq    %r10, %r12
+	imulq	$10, %rbx		# rbx initialiserat till 0, därav 0 * 10 för första siffran
 	addq	%r12, %rbx
 nextNumber:
 	incq    %rax
 	incq    %r9
-	incq	%r11
 	jmp     getNumber
 getIntEnd:
-	cmpq	$1, %r8
+	cmpq	$1, %r8			# om r8 = 1, invertera. om r8 = 0, returnera talet direkt.
 	jne	getIntReturn
 	negq	%rbx
 getIntReturn:
