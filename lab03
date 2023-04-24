@@ -13,7 +13,7 @@ main:
     call    outImage
 inImage:
 	leaq 	inbuf, %rdi
-	movq	$5, %rsi
+	movq	$5, %rsi		# byta ut 5 mot andra argumentet, dvs max antal tecken?
 	movq	stdin, %rdx
 	call	fgets
 	movq	$0, Incounter
@@ -21,6 +21,9 @@ inImage:
 
 #
 # getInt gör nu som den ska för kontroll av siffror samt multiplikation och konvertering.
+# TODO:
+#	andra argumentet ska vara maximalt antal tecken som ska överföras,
+#	ska göra justering för detta i början av getInt
 #
 
 getInt:
@@ -32,30 +35,28 @@ getInt:
 inbufloop:
 	cmpq    $64, %rax
 	jne     getIntLoop
-	pushq   %rdi
 	call    inImage
-	popq    %rdi
+	movq	$inbuf, %rdi
 getIntLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $'', %r10b
 	jne	checkBlank
-	pushq	%rdi
 	call	inImage
-	popq	%rdi
+	movq	$inbuf, %rdi
 checkBlank:
 	movb    (%rdi, %r9), %r10b
 	cmp     $' ', %r10b
 	jne     checkNegative
 	incq    %r9
 	incq    %rax
-	je      inbufloop
+	jmp	inbufloop
 checkNegative:
 	cmp     $'-', %r10b
 	jne     checkPlus
 	movq	$1, %r8
 	incq    %r9
 	incq    %rax
-	je      getNumber
+	jmp     getNumber
 checkPlus:
 	cmp     $'+', %r10b
 	jne     getNumber
@@ -65,20 +66,19 @@ checkPlus:
 getNumber:
 	cmpq    $64, %rax
 	jne     getNumberLoop
-	pushq   %rdi
 	call    inImage
-	popq    %rdi
+	movq	$inbuf, %rbx
 getNumberLoop:
 	movb    (%rdi, %r9), %r10b
 	cmp     $'9', %r10b
 	jg      getIntEnd
 	cmp     $'0', %r10b
 	jl      getIntEnd
-	movzbq	%r10b, %r10
-	subq	$'0', %r10
+	movzbq	%r10b, %r10		# teckenutfyllnad
+	subq	$'0', %r10		# konvertering
 	movq    %r10, %r12
 	imulq	$10, %rbx		# rbx initialiserat till 0, därav 0 * 10 för första siffran
-	addq	%r12, %rbx
+	addq	%r12, %rbx		# lägg till aktuell, konverterad siffra i inbuffert till rbx
 nextNumber:
 	incq    %rax
 	incq    %r9
@@ -89,6 +89,7 @@ getIntEnd:
 	negq	%rbx
 getIntReturn:
 	movq	%rax, Incounter
+	movq	%rbx, %rax		# flyttar heltalet i rbx till rax enligt konvention
 	ret
 	
 	
