@@ -13,7 +13,7 @@ main:
     call    outImage
 inImage:
 	leaq 	inbuf, %rdi
-	movq	$5, %rsi		# byta ut 5 mot andra argumentet, dvs max antal tecken?
+	movq	$5, %rsi		# byta ut 5 mot andra argumentet i inmatningsfunktioner, dvs max antal tecken?
 	movq	stdin, %rdx
 	call	fgets
 	movq	$0, Incounter
