@@ -113,12 +113,14 @@ textLoop:
 getChar:
 	movq    $inbuf, %rsi 		# flyttar buf till rdi
 	movq	Incounter,%rdx		# returnerar vad som står i counter
-	movq    (%rsi, %rdx), %rax
-	cmpq    0,%rax
+	movb    (%rsi, %rdx), %r10b
+	cmpb    '',%r10b
 	je      inImage
-	cmpq    '64',%rdx
+	cmpq    64,%rdx
 	je      inImage
 	incq    %rdx
+	movq	%rdx,Incounter		# returnerar vad som står i counter
+	ret
 
 getInPos:
 	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
