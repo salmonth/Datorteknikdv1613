@@ -123,18 +123,21 @@ getChar:
 getInPos:
 	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
     	ret
+
 setInPos:
 	cmpq	$0,%rdi				# kollar ifall det är mindre än noll
 	jl	lessthanzero
 	cmpq	$64,%rdi			# kollar ifall det är större än 64
 	jg	largerthanzero
-	movq    %rdi, Outcounter
+	movq    %rdi, Incounter			# bytte till Incounter från Outcounter
 	ret
 lessthanzero:
 	movq	$0,%rdi 			# rdi blir 0
+	movq    %rdi, Incounter
 	ret
 largerthanzero:
 	movq	$64,%rdi			# rdi blir 64
+	movq    %rdi, Incounter			# flyttar Maxpos till incounter
 	ret
 	
 outImage:
@@ -227,7 +230,9 @@ setOutPos:
     	ret
 Outlessthanzero:
     	movq	$0,%rdi 			# rdi blir 0
+	movq	%rdi, Outcounter
     	ret
 Outlargerthanzero:
     	movq	$64,%rdi			# rdi blir 64
+	movq	%rdi, Outcounter
     	ret	
