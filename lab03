@@ -192,6 +192,7 @@ putTextLoop:
 	movb 	%r10b, (%rsi, %rax)     # lägg char i utbuffert
 	incq	%r9                     # öka index i text
 	incq	%rax                    # öka index i utbuffert
+	cmpq	$0, %rsi
 	jne     outBufLoop
 putTextEnd:
 	movq 	%rax, Outcounter        # uppdatera outcounter
