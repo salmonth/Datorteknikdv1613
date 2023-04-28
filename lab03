@@ -141,7 +141,11 @@ largerthanzero:
 	movq	$64,%rdi			# rdi blir 64
 	movq    %rdi, Incounter			# flyttar Maxpos till incounter
 	ret
-	
+
+###
+# rutiner för utmatning:
+###
+
 outImage:
 	leaq 	outbuf, %rdi
 	movq	Outcounter, %rax
@@ -149,28 +153,44 @@ outImage:
     	call    puts                	# anropar puts, rdi pekar på outbuf
 	movq	$0, Outcounter      	# nollställ Outcounter
 	ret
+
+# TODO (putInt):
+# testa, justera till rätt register i addToOutbuf, ev. en extra loop för att hantera negativa tal
+
 putInt:
+	movq    %rdi, %rdx
 	movq    $outbuf, %rsi
-	call	getOutPos
-	movq	%rax, %r9
+	movq    $0, %r8
+putIntLoop:
+	movq    %rdx, %rax
+	cltq    
+	idivq   $10
+	addq    $48, rdx
+	pushq   %rdx
+	subq    $48, rdx
+	incq    %r8
+	cmpq    $0, %rax
+	jg      putIntLoop
+	call    getOutPos
 outIntLoop:
 	cmpq	$64, %rax
 	jne     putIntLoop
-	pushq	%rdi			# pushar rdi, rdi är input parameter med text
-	pushq	%rax            	# rax = outcounter
+	pushq	%rdi
+	pushq	%rax
 	call    outImage
 	popq 	%rax
 	popq 	%rdi
-putIntLoop:
-	movb    (%rdi,%r9), %r10b       # itererar rdi, r10b är nästa char (8 bit)
-	cmp	$0, %r10b               # compare, 0 = slut på nullterm. sträng
-	je	putIntEnd
-	movb 	%r10b, (%rsi, %rax)     # lägg char i utbuffert
-	incq	%r9                     # öka index i text
-	incq	%rax                    # öka index i utbuffert
-	jne     outIntLoop
+addToOutbuf:
+	popq    %rdi
+	movb    %rdi, %r10b
+	movb	%r10b, (%rsi, %rax)
+	decq    %r8
+	incq    %rax
+	cmpq    $0,%r8
+	je      putIntEnd
+	jmp     outIntLoop
 putIntEnd:
-	movq 	%rax, Outcounter        # uppdatera outcounter
+	movq 	%rax, Outcounter
 	ret
 
 putText:
