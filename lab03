@@ -118,8 +118,8 @@ getChar:
 	je      inImage
 	cmpq    $64,%r9
 	je      inImage
-	incq    %rdx
-	movq	%rdx,Incounter		# returnerar vad som står i counter
+	incq    %r9
+	movq	%r9,Incounter		# returnerar vad som står i counter
 	ret
 
 getInPos:
