@@ -157,7 +157,7 @@ putInt:
 	movq    $0, %r8
 putIntLoop:
 	movq    %rdx, %rax
-	cltq    
+	cqto    
 	idivq   $10
 	addq    $48, rdx
 	pushq   %rdx
