@@ -91,7 +91,49 @@ getIntReturn:
 	movq	%rax, Incounter
 	movq	%rbx, %rax		# flyttar heltalet i rbx till rax enligt konvention
 	ret
-	
+
+##########
+
+###
+# Förslag på getText och getInt tom rad 134, de fungerade för mig
+###
+
+getText:
+    movq    %rdi, %rdx
+    movq    %rsi, %r8
+    movq    $0, %r10
+getCharRpt:
+    call    getChar
+    movb    %al,(%rdx, %r10)
+    incq    %r10
+    cmpq    %r8, %r10
+    jl      getCharRpt
+    movq    %r8, %rax
+    ret
+
+getChar:
+    call    getInPos
+    movq    %rax, %r9
+    xorq    %rax, %rax
+getCharBuf:
+    cmpq    $64, %r9
+    jne     checkEmpty
+    call    inImage
+    movq    %rdi, %rdx
+    movq    Incounter, %r9
+checkEmpty:
+    cmpq    $0, %rdx
+    jne     addCharToBuf
+    call    inImage
+    movq    %rdi, %rdx
+    movq    Incounter, %r9
+addCharToBuf:
+    movb    (%rdx, %r9), %al
+    incq    %r9
+    movq    %r9, Incounter
+    ret
+
+#########
 	
 getText:
     movq    $0,%r10
@@ -143,8 +185,8 @@ largerthanzero:
 outImage:
 	leaq 	outbuf, %rdi
 	movq	Outcounter, %rax
+	movb	$0, (%rdi, %rax) 	# strängen måste vara nullterminerad vid utskrift, måste ligga innan puts
     	call    puts                	# anropar puts, rdi pekar på outbuf
-    	movb	$0, (%rdi, %rax)    	# nullterminering av sträng
 	movq	$0, Outcounter      	# nollställ Outcounter
 	ret
 
