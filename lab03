@@ -143,8 +143,8 @@ largerthanzero:
 outImage:
 	leaq 	outbuf, %rdi
 	movq	Outcounter, %rax
-	movb	$0, (%rdi, %rax)    	# nullterminering av sträng
     	call    puts                	# anropar puts, rdi pekar på outbuf
+    	movb	$0, (%rdi, %rax)    	# nullterminering av sträng
 	movq	$0, Outcounter      	# nollställ Outcounter
 	ret
 
