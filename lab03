@@ -228,7 +228,7 @@ putIntLoop:
 	call    getOutPos
 outIntLoop:
 	cmpq	$64, %rax
-	jne     putIntLoop
+	jne     addToOutBuf
 	pushq	%rdi
 	pushq	%rax
 	call    outImage
