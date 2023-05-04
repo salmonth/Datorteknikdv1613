@@ -98,6 +98,14 @@ getIntReturn:
 # Förslag på getText och getInt tom rad 134, de fungerade för mig
 ###
 
+inImage:
+    leaq     inbuf, %rdi
+    movq    $5, %rsi        # byta ut 5 mot andra argumentet i inmatningsfunktioner, dvs max antal tecken?
+    movq    stdin, %rdx
+    call    fgets
+    movq    $0, Incounter
+    ret
+
 getText:
     movq    %rdi, %rdx
     movq    %rsi, %r8
@@ -112,23 +120,26 @@ getCharRpt:
     ret
 
 getChar:
+    movq    $inbuf,%r12
     call    getInPos
     movq    %rax, %r9
+    xorq    %r11, %r11
+    movb    (%r12,%r9),%r11b
     xorq    %rax, %rax
 getCharBuf:
     cmpq    $64, %r9
     jne     checkEmpty
     call    inImage
-    movq    %rdi, %rdx
+    movq    %rdi, %r11
     movq    Incounter, %r9
 checkEmpty:
-    cmpq    $0, %rdx
+    cmpb    $0, %r11b
     jne     addCharToBuf
     call    inImage
-    movq    %rdi, %rdx
+    movq    %rdi, %r11
     movq    Incounter, %r9
 addCharToBuf:
-    movb    (%rdx, %r9), %al
+    movb    %r11b, %al
     incq    %r9
     movq    %r9, Incounter
     ret
