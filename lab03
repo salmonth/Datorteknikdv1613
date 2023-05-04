@@ -132,6 +132,13 @@ getCharBuf:
     call    inImage
     movq    %rdi, %r11
     movq    Incounter, %r9
+    
+ checkEmpty:
+    cmpb    $10, %r11b
+    jne     addCharToBuf
+    call    inImage
+    ret
+    
 checkEmpty:
     cmpb    $0, %r11b
     jne     addCharToBuf
