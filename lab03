@@ -208,37 +208,40 @@ outImage:
 	movq	$0, Outcounter      	# nollställ Outcounter
 	ret
 
-# TODO (putInt):
-# testa, justera till rätt register i addToOutbuf, ev. en extra loop för att hantera negativa tal
+# putInt fungerar
 
 putInt:
 	movq    %rdi, %rdx
 	movq    $outbuf, %rsi
 	movq    $0, %r8
-putIntLoop:
+	movq    $0, %r9
+	movq    $10, %r11
+	xorq    %rax, %rax
 	movq    %rdx, %rax
-	cqto    
-	idivq   $10
-	addq    $48, rdx
+putIntLoop:
+	xorq    %rdx, %rdx
+	idivq   %r11
+	addq    $48, %rdx
 	pushq   %rdx
-	subq    $48, rdx
+	subq    $48, %rdx
 	incq    %r8
 	cmpq    $0, %rax
 	jg      putIntLoop
 	call    getOutPos
 outIntLoop:
 	cmpq	$64, %rax
-	jne     addToOutBuf
+	jne     addToOutbuf
 	pushq	%rdi
 	pushq	%rax
 	call    outImage
 	popq 	%rax
 	popq 	%rdi
 addToOutbuf:
-	popq    %rdi
-	movb    %rdi, %r10b
-	movb	%r10b, (%rsi, %rax)
+	popq    %rdx
+	movb    %dl, %r10b
+	movb 	%r10b, (%rsi, %rax)
 	decq    %r8
+	incq    %r9
 	incq    %rax
 	cmpq    $0,%r8
 	je      putIntEnd
