@@ -92,89 +92,50 @@ getIntReturn:
 	movq	%rbx, %rax		# flyttar heltalet i rbx till rax enligt konvention
 	ret
 
-##########
-
-###
-# Förslag på getText och getInt tom rad 134, de fungerade för mig
-###
-
-inImage:
-    leaq     inbuf, %rdi
-    movq    $5, %rsi        # byta ut 5 mot andra argumentet i inmatningsfunktioner, dvs max antal tecken?
-    movq    stdin, %rdx
-    call    fgets
-    movq    $0, Incounter
-    ret
-
 getText:
-    movq    %rdi, %rdx
-    movq    %rsi, %r8
-    movq    $0, %r10
-getCharRpt:
-    call    getChar
-    movb    %al,(%rdx, %r10)
-    incq    %r10
-    cmpq    %r8, %r10
-    jl      getCharRpt
-    movq    %r8, %rax
-    ret
-
-getChar:
-    movq    $inbuf,%r12
-    call    getInPos
+    movq    %rdi, %rcx
+    movq    $inbuf, %rdi
+    movq    $Incounter, %rax
     movq    %rax, %r9
-    xorq    %r11, %r11
-    movb    (%r12,%r9),%r11b
+    movq    %rsi, %r8
+    movq    $0, %r11
+getCharRpt:
     xorq    %rax, %rax
-getCharBuf:
-    cmpq    $64, %r9
-    jne     checkEmpty
-    call    inImage
-    movq    %rdi, %r11
-    movq    Incounter, %r9
-    
- checkEmpty:
-    cmpb    $10, %r11b
-    jne     addCharToBuf
-    call    inImage
-    ret
-    
-checkEmpty:
-    cmpb    $0, %r11b
-    jne     addCharToBuf
-    call    inImage
-    movq    %rdi, %r11
-    movq    Incounter, %r9
-addCharToBuf:
-    movb    %r11b, %al
+    call    getChar
+    movb    %al,(%rcx, %r11)
+    incq    %r11
     incq    %r9
     movq    %r9, Incounter
+    cmpq    %r8, %r11
+    jl      getCharRpt
+getTextEnd:
+    movq    %r11, %rax
     ret
 
-#########
-	
-getText:
-    movq    $0,%r10
-    call GetCharRepeat
-    movq    %r10,%rax
-GetCharRepeat:
-    call    getChar
-    movq    %rax,(%rdi, %r10)
-    incq    %r10
-    cmpq    %rsi,%r10
-    jg     GetCharRepeat
-    ret
 getChar:
-	movq    $inbuf, %rdx 		# flyttar buf till rdi
-	movq	Incounter,%r9		# returnerar vad som står i counter
-	movq    (%rdx, %r9), %rax
-	cmp     $'',%rax
-	je      inImage
-	cmpq    $64,%r9
-	je      inImage
-	incq    %r9
-	movq	%r9,Incounter		# returnerar vad som står i counter
-	ret
+    movq    $inbuf, %rdi
+    movq    $Incounter,%r9
+getCharBufLoop:
+    cmpq    $64, %r9
+    jne     checkCharEmpty
+    call    inImage
+    movq    $inbuf, %rdi
+    movq    $Incounter, %r9
+checkCharEmpty:
+    cmpq    $0, %rdi
+    jne     returnChar
+    call    inImage
+    movq    $inbuf, %rdi
+    movq    $Incounter, %r9
+returnChar:
+    movq    %rdi, %rdx
+    movb    %dl, %r10b
+    movzbq	%r10b, %r10
+    incq    %r9
+    movq    %r9, Incounter
+    xorq    %rax, %rax
+    movq    %r10, %rax
+    ret
 
 getInPos:
 	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
