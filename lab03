@@ -30,7 +30,7 @@ l1:
 	call	setOutPos
 l2:
 	movq	temp,%rdx
-	add	    %rdx,sum
+	add	%rdx,sum
 	movq	%rdx,%rdi
 	call	putInt
 	movq	$'+',%rdi
@@ -60,6 +60,7 @@ l2:
 	call	outImage
 	popq	%rax
 	ret
+
 
 inImage:
 	movq 	$inbuf, %rdi
@@ -140,6 +141,8 @@ getText:
 getCharRpt:
     xorq    %rax, %rax
     call    getChar
+    cmpq    '',%rax
+    je      getTextEnd
     movb    %al,(%rcx, %r11)
     incq    %r11
     incq    %r9
@@ -203,8 +206,10 @@ outImage:
 	movq 	$outbuf, %rdi
 	call    puts                	# anropar puts, rdi pekar på outbuf
 	movq	$0, Outcounter      	# nollställ Outcounter
-	xorq    %rdi,%rdi
-	movq    %rdi,outbuf
+	mov    $outbuf, %edi    # Set destination address to inbuf
+    mov    $64, %ecx       # Set loop counter to 64 (inbuf size)
+    mov    $0, %al         # Set byte value to 0
+    rep    stosb           # Clear the inbuf content
 	ret
 
 # putInt fungerar
