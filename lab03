@@ -61,6 +61,14 @@ l2:
 	popq	%rax
 	ret
 
+### vår fil from denna rad
+	.data
+inbuf:	.space	64
+outbuf: .space 64
+Incounter: .quad 0
+Outcounter: .quad 0
+	.text
+	.global	inImage, getInt, getText, getChar, getInPos, setInPos, outImage, putInt, putText, putChar, getOutPos, setOutPos
 
 inImage:
 	movq 	$inbuf, %rdi
@@ -77,7 +85,7 @@ getInt:
 	movq	$0, %r8		
 	movq    $0, %rbx		
 inbufloop:
-	cmpq    $65, %rax
+	cmpq    $64, %rax
 	jl     getIntLoop
 	call    inImage
 	movq	$inbuf, %rdi
@@ -131,17 +139,18 @@ getIntReturn:
 	movq	%rax, Incounter
 	movq	%rbx, %rax		
 	ret
+
 getText:
 	movq    %rdi, %rcx
 	movq    $inbuf, %rdi
-	movq    $Incounter, %rax
+	movq    Incounter, %rax
 	movq    %rax, %r9
 	movq    %rsi, %r8
 	movq    $0, %r11
 getCharRpt:
 	xorq    %rax, %rax
 	call    getChar
-	cmpq    $'',%rax
+	cmp	$'', %al
 	je      getTextEnd
 	movb    %al,(%rcx, %r11)
 	incq    %r11
@@ -155,7 +164,7 @@ getTextEnd:
 
 getChar:
 	movq    $inbuf, %rdi
-	movq    $Incounter,%r9
+	movq    Incounter,%r9
 getCharBufLoop:
 	cmpq    $64, %r9
 	jne     checkCharEmpty
@@ -170,32 +179,30 @@ checkCharEmpty:
 	movq    $Incounter, %r9
 returnChar:
 	movq    %rdi, %rdx
-	movb    %dl, %r10b
+	movb    (%rdx,%r9), %r10b
 	movzbq	%r10b, %r10
-	incq    %r9
-	movq    %r9, Incounter
 	xorq    %rax, %rax
 	movq    %r10, %rax
 	ret
 
 getInPos:
-	movq	Incounter,%rax		# flyttar incounter till rax, returnerar.
+	movq	Incounter,%rax
     	ret
 
 setInPos:
-	cmpq	$0,%rdi				# kollar ifall det är mindre än noll
+	cmpq	$0, %rdi
 	jl	lessthanzero
-	cmpq	$64,%rdi			# kollar ifall det är större än 64
+	cmpq	$64,%rdi
 	jg	largerthanzero
-	movq    %rdi, Incounter			# bytte till Incounter från Outcounter
+	movq    %rdi, Incounter
 	ret
 lessthanzero:
-	movq	$0,%rdi 			# rdi blir 0
+	movq	$0, %rdi
 	movq    %rdi, Incounter
 	ret
 largerthanzero:
-	movq	$64,%rdi			# rdi blir 64
-	movq    %rdi, Incounter			# flyttar Maxpos till incounter
+	movq	$64, %rdi
+	movq    %rdi, Incounter
 	ret
 
 ###
@@ -252,7 +259,6 @@ addToOutbuf:
 	movb    %dl, %r10b
 	movb 	%r10b, (%rsi, %rax)
 	decq    %r8
-	incq    %r9
 	incq    %rax
 	cmpq    $0,%r8
 	je      putIntEnd
@@ -299,29 +305,30 @@ outCharLoop:
 	popq	%rdi
 putCharLoop:
 	movq	Outcounter,%rax
-	movq    %rax,%r9
-	movq    %rdi,%rdx
+	movq    %rax, %r9
+	movq    %rdi, %rdx
 	movb    %dl, %r10b
 	movb	%r10b, (%rsi, %r9)
 	incq	%r9
 	movq    %r9,Outcounter
 	ret
+
 getOutPos:
-    	movq	Outcounter,%rax		# returnerar vad som står i counter
+    	movq	Outcounter, %rax
     	ret
 
 setOutPos:
-    	cmpq	$0,%rdi				# kollar ifall det är mindre än noll
+    	cmpq	$0,%rdi
     	jl	Outlessthanzero
-    	cmpq	$64,%rdi			# kollar ifall det Ã¤r större Ã¤n 64
+    	cmpq	$64, %rdi
     	jg	Outlargerthanzero
-    	movq	%rdi, Outcounter	# Ändra värdet på counter
+    	movq	%rdi, Outcounter
     	ret
 Outlessthanzero:
-    	movq	$0,%rdi 			# rdi blir 0
+    	movq	$0,%rdi
 	movq	%rdi, Outcounter
     	ret
 Outlargerthanzero:
-    	movq	$64,%rdi			# rdi blir 64
+    	movq	$64,%rdi
 	movq	%rdi, Outcounter
     	ret		
