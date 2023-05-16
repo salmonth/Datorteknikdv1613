@@ -1,0 +1,177 @@
+	.data
+counter:	.quad 0
+GPIO:		.quad 0
+	.text
+	.global setup
+	.global interrupt
+.text
+.global main
+main:
+    call interrupt
+    call setup
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+            call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+        call interrupt
+	ret
+
+
+
+
+
+interrupt:
+	#count up the counter from 0 to 15 modulo 16
+	movq	counter, %rbx
+	incq	%rbx
+	andq	$0xf, %rbx
+	movq	%rbx, counter
+	cmpq  $1, %rbx
+	je   one
+	cmpq  $2, %rbx
+	je   two
+	cmpq  $3, %rbx
+	je   three
+	cmpq  $4, %rbx
+	je   four
+	cmpq  $5, %rbx
+	je   five
+	cmpq  $6, %rbx
+	je   six
+	cmpq  $7, %rbx
+	je   seven
+	cmpq  $8, %rbx
+	je   eight
+	cmpq  $9, %rbx
+	je   nine
+	cmpq  $10, %rbx
+	je   ten
+	cmpq  $11, %rbx
+	je   eleven
+	cmpq  $12, %rbx
+	je   twelve
+	cmpq  $13, %rbx
+	je   thirteen
+	cmpq  $14, %rbx
+	je   fourteen
+	cmpq  $15, %rbx
+	je   fifteen
+
+one:
+call LightOne
+two:
+call LightTwo
+three:
+call LightOne
+call LightTwo
+four:
+call LightFour
+five:
+call LightOne
+call LightFour
+six:
+call LightTwo
+call LightFour
+seven:
+call LightOne
+call LightTwo
+call LightFour
+eight:
+call LightEight
+nine:
+call LightOne
+call LightEight
+ten:
+call LightTwo
+call LightEight
+eleven:
+call LightOne
+call LightTwo
+call LightEight
+twelve:
+call LightFour
+call LightEight
+thirteen:
+call LightOne
+call LightFour
+call LightEight
+fourteen:
+call LightTwo
+call LightFour
+call LightEight
+fifteen:
+call LightOne
+call LightTwo
+call LightFour
+call LightEight
+LightOne:
+# set first GPIO pin to high level (LED on)
+movq	GPIO, %r9
+movq	$0x3, %rbx
+shlq	$4, %rbx
+orq		%rbx, %r9
+addq	$3, %r9
+movq	$1, %rbx
+shlq	$4, %rbx
+orq		%rbx, %r9
+ret
+LightTwo:
+# set second GPIO pin to high level (LED on)
+movq	GPIO, %r9
+movq	$0x3, %rbx
+shlq	$2, %rbx
+orq		%rbx, %r9
+addq	$3, %r9
+movq	$1, %rbx
+shlq	$2, %rbx
+orq		%rbx, %r9
+ret
+LightFour:
+# set third GPIO pin to high level (LED on)
+movq	GPIO, %r9
+orq		%rbx, %r9
+addq	$3, %r9
+movq	$1, %rbx
+orq		%rbx, %r9
+ret
+LightEight:
+# set fourth GPIO pin to high level (LED on)
+movq	GPIO, %r9
+addq	$3, %r9
+movq	$1, %rbx
+shlq	$8, %rbx
+orq		%rbx, %r9
+ret
+setup:
+# calculate and save the memory address of the GPIO
+movq	$0x60, %rdi
+shlq	$16, %rdi
+movq    $0xFFFF,%rbx 
+andq	$0x1000, %rbx
+orq     %rdi,%rbx
+movq    $0x9E,%rbx
+not     %rbx
+andq    $0xFF,%rbx
+orq     %rdi,%rbx
+movq	%rdi, GPIO
+
+
+
+
+ret
