@@ -164,11 +164,11 @@ movq	$0x60, %rdi
 shlq	$16, %rdi
 movq    $0xFFFF,%rbx 
 andq	$0x1000, %rbx
+movq    $0x9E,%r9
+not     %r9
+andq    $0xFF,%r9
 orq     %rdi,%rbx
-movq    $0x9E,%rbx
-not     %rbx
-andq    $0xFF,%rbx
-orq     %rdi,%rbx
+orq     %rbx,%r9
 movq	%rdi, GPIO
 
 
