@@ -169,7 +169,7 @@ not     %r9
 andq    $0xFF,%r9
 orq     %rdi,%rbx
 orq     %rbx,%r9
-movq	%rdi, GPIO
+movq	%r9, GPIO
 
 
 
