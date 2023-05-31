@@ -173,62 +173,60 @@ movq	%r9, GPIO
 
 
 # Set GPIO pins 1-4 as outputs (index 1-4)
-movq    $1,%r8
+movq    $1,%rdx
 movq	%r9, %rdi
 movq	$0x2, %rax
 shlq	$6, %rax
 movq	$4, %rcx
-subq	%r8, %rcx
-imulq   $2,%r8
-shlq	%r8, %rax
+subq	%rdx, %rcx
+imulq   $2,%rdx
+shlq	%cl, %rax
+orq	%rdi, %rax
+
+incq    %rdx
+movq	%r9, %rdi
+movq	$0x2, %rax
+shlq	$6, %rax
+movq	$4, %rcx
+subq	%rdx, %rcx
+imulq   $2,%rdx
+shlq	%cl, %rax
 orq	    %rdi, %rax
 
-addq    %r8
+incq    %rdx
 movq	%r9, %rdi
 movq	$0x2, %rax
 shlq	$6, %rax
 movq	$4, %rcx
-subq	%r8, %rcx
-imulq   $2,%r8
-shlq	%r8, %rax
+subq	%rdx, %rcx
+imulq   $2,%rdx
+shlq	%cl, %rax
 orq	    %rdi, %rax
 
-addq    %r8
+incq    %rdx
 movq	%r9, %rdi
 movq	$0x2, %rax
 shlq	$6, %rax
 movq	$4, %rcx
-subq	%r8, %rcx
-imulq   $2,%r8
-shlq	%r8, %rax
-orq	    %rdi, %rax
-
-addq    %r8
-movq	%r9, %rdi
-movq	$0x2, %rax
-shlq	$6, %rax
-movq	$4, %rcx
-subq	%r8, %rcx
-imulq   $2,%r8
-shlq	%r8, %rax
+subq	%rdx, %rcx
+imulq   $2,%rdx
+shlq	%cl, %rax
 orq	    %rdi, %rax
 
 # Set GPIO pin 0 as an input (index 0)
-movq    $0,%r8
+movq    $0,%rdx
 movq	%r9, %rdi
 movq	$0x3, %rbx
 
 movq	$3, %rcx
 subq    %r8,%rcx
-imulq   $2,%r8
-andq    $7,%r8
-addq    $8,%r8
-shlq	%r8, %rbx
+imulq   $2,%rdx
+andq    $7,%rdx
+addq    $8,%rdx
+shlq	%cl, %rbx
 
 movq    $0,%r8
 movq    $8,%rax
-idvq    %r8
+idivq    %r8
 addq    %r8,%rdi
 orq     %rdi,%rbx
-
-ret
