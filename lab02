@@ -214,19 +214,23 @@ shlq	%cl, %rax
 orq	    %rdi, %rax
 
 # Set GPIO pin 0 as an input (index 0)
-movq    $0,%rdx
-movq	%r9, %rdi
+movq    $0, %rsi 	# GPIO_NR
+movq	%r9, %rdi	# gpio_adrr
 movq	$0x3, %rbx
 
+movq    $8,%r8
+movq    $rsi, %rax
+xorq	%rdx, %rdx
+idivq   %r8
+addq    %rax, %rdi
+
 movq	$3, %rcx
-subq    %r8,%rcx
-imulq   $2,%rdx
-andq    $7,%rdx
-addq    $8,%rdx
+subq    %rsi, %rcx
+imulq   $2, %rcx
+andq    $7, %rcx
+addq    $8, %rcx
 shlq	%cl, %rbx
 
-movq    $0,%r8
-movq    $8,%rax
-idivq    %r8
-addq    %r8,%rdi
 orq     %rdi,%rbx
+movq	%rbx, %rdi
+ret
