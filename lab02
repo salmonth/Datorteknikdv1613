@@ -219,7 +219,7 @@ movq	%r9, %rdi	# gpio_adrr
 movq	$0x3, %rbx
 
 movq    $8,%r8
-movq    $rsi, %rax
+movq    %rsi, %rax
 xorq	%rdx, %rdx
 idivq   %r8
 addq    %rax, %rdi
