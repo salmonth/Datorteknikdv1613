@@ -181,7 +181,7 @@ movq	$4, %rcx
 subq	%rdx, %rcx
 imulq   $2,%rdx
 shlq	%cl, %rax
-orq	%rdi, %rax
+orq	(%rdi), %rax
 
 incq    %rdx
 movq	%r9, %rdi
@@ -191,7 +191,7 @@ movq	$4, %rcx
 subq	%rdx, %rcx
 imulq   $2,%rdx
 shlq	%cl, %rax
-orq	    %rdi, %rax
+orq	(%rdi), %rax
 
 incq    %rdx
 movq	%r9, %rdi
@@ -201,7 +201,7 @@ movq	$4, %rcx
 subq	%rdx, %rcx
 imulq   $2,%rdx
 shlq	%cl, %rax
-orq	    %rdi, %rax
+orq	(%rdi), %rax
 
 incq    %rdx
 movq	%r9, %rdi
@@ -211,7 +211,7 @@ movq	$4, %rcx
 subq	%rdx, %rcx
 imulq   $2,%rdx
 shlq	%cl, %rax
-orq	    %rdi, %rax
+orq	(%rdi), %rax
 
 # Set GPIO pin 0 as an input (index 0)
 movq    $0, %rsi 	# GPIO_NR
@@ -231,6 +231,6 @@ andq    $7, %rcx
 addq    $8, %rcx
 shlq	%cl, %rbx
 
-orq     %rdi,%rbx
-movq	%rbx, %rdi
+orq     (%rdi),%rbx
+# movq	%rbx, %rdi
 ret
