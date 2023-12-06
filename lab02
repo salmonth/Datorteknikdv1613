@@ -72,58 +72,72 @@ interrupt:
 	je   fourteen
 	cmpq  $15, %rbx
 	je   fifteen
-
+    ret
 one:
 call LightOne
+ret
 two:
 call LightTwo
+ret
 three:
 call LightOne
 call LightTwo
+ret
 four:
 call LightFour
+ret
 five:
 call LightOne
 call LightFour
+ret
 six:
 call LightTwo
 call LightFour
+ret
 seven:
 call LightOne
 call LightTwo
 call LightFour
+ret
 eight:
 call LightEight
+ret
 nine:
 call LightOne
 call LightEight
+ret
 ten:
 call LightTwo
 call LightEight
+ret
 eleven:
 call LightOne
 call LightTwo
 call LightEight
+ret
 twelve:
 call LightFour
 call LightEight
+ret
 thirteen:
 call LightOne
 call LightFour
 call LightEight
+ret
 fourteen:
 call LightTwo
 call LightFour
 call LightEight
+ret
 fifteen:
 call LightOne
 call LightTwo
 call LightFour
 call LightEight
+ret
 LightOne:
 # set first GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
-movq    (%r9), %rax          # Load the 32-bit value at the GPIO memory address
 movq    $1, %rcx         	# Load the GPIO number into %rcx
 subq    $1, %rcx             # Adjust to 0-based indexing
 imulq   $8, %rcx             # Multiply by 8
@@ -134,13 +148,12 @@ addq    $1, %rbx             # Add 1 to the result
 
 shlq    %cl, %rbx            # Shift left based on GPIO number
 
-orq     %rbx, %rax           # Combine with the existing value
-movq    %rax, (%r9)          # Store the result back to the GPIO memory address
+orq     %rbx, %r9           # Combine with the existing value
+movq    %rbx, (GPIO)
+# Store the result back to the GPIO memory address
 ret
 LightTwo:
-# set second GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
-movq    (%r9), %rax          # Load the 32-bit value at the GPIO memory address
 movq    $2, %rcx         	# Load the GPIO number into %rcx
 subq    $1, %rcx             # Adjust to 0-based indexing
 imulq   $8, %rcx             # Multiply by 8
@@ -151,13 +164,12 @@ addq    $1, %rbx             # Add 1 to the result
 
 shlq    %cl, %rbx            # Shift left based on GPIO number
 
-orq     %rbx, %rax           # Combine with the existing value
-movq    %rax, (%r9)          # Store the result back to the GPIO memory address
+orq     %rbx, %r9           # Combine with the existing value
+movq    %rbx, (GPIO)
+# Store the result back to the GPIO memory address
 ret
 LightFour:
-# set third GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
-movq    (%r9), %rax          # Load the 32-bit value at the GPIO memory address
 movq    $3, %rcx         	# Load the GPIO number into %rcx
 subq    $1, %rcx             # Adjust to 0-based indexing
 imulq   $8, %rcx             # Multiply by 8
@@ -168,13 +180,12 @@ addq    $1, %rbx             # Add 1 to the result
 
 shlq    %cl, %rbx            # Shift left based on GPIO number
 
-orq     %rbx, %rax           # Combine with the existing value
-movq    %rax, (%r9)          # Store the result back to the GPIO memory address
+orq     %rbx, %r9           # Combine with the existing value
+movq    %rbx, (GPIO)
+# Store the result back to the GPIO memory address
 ret
 LightEight:
-# set fourth GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
-movq    (%r9), %rax          # Load the 32-bit value at the GPIO memory address
 movq    $4, %rcx         	# Load the GPIO number into %rcx
 subq    $1, %rcx             # Adjust to 0-based indexing
 imulq   $8, %rcx             # Multiply by 8
@@ -185,8 +196,9 @@ addq    $1, %rbx             # Add 1 to the result
 
 shlq    %cl, %rbx            # Shift left based on GPIO number
 
-orq     %rbx, %rax           # Combine with the existing value
-movq    %rax, (%r9)          # Store the result back to the GPIO memory address
+orq     %rbx, %r9           # Combine with the existing value
+movq    %rbx, (GPIO)
+# Store the result back to the GPIO memory address
 ret
 
 setup:
