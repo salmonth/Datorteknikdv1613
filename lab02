@@ -220,19 +220,19 @@ movq    $1,%rdx
 movq	%r9, %rdi
 
 output_loop:
-	movq	GPIO,%rdi
-    movq    $0x2, %rax   # Set output value
-    shlq    $6, %rax     # Shift to the correct position
-    movq    $4, %rcx     # Number of GPIO pins to set
-    subq    %rdx, %rcx   # Adjust for the current pin
-    imulq   $2, %rcx     # Multiply by 2 (each pin is 2 bits)
-    shlq    %cl, %rax    # Shift to the correct position for the current pin
-    orq     %rdi, %rax # Set the output value for the current pin
+movq	GPIO,%rdi
+movq    $0x2, %rax	# Set output value
+shlq    $6, %rax	# Shift to the correct position
+movq    $4, %rcx	# Number of GPIO pins to set
+subq    %rdx, %rcx	# Adjust for the current pin
+imulq   $2, %rcx	# Multiply by 2 (each pin is 2 bits)
+shlq    %cl, %rax	# Shift to the correct position for the current pin
+orq     %rax, (%rdi)	# Set the output value for the current pin
 
-    incq    %rdx         # Move to the next pin
-	movq	%rax,GPIO
-    cmpq    $4, %rdx     # Check if all pins are set
-    jle     output_loop  # Continue the loop if not
+incq    %rdx		# Move to the next pin
+# movq	%rax,GPIO
+cmpq    $4, %rdx	# Check if all pins are set
+jle     output_loop	# Continue the loop if not
 
 # Set GPIO pin 0 as an input (index 0)
 movq    $0, %rsi 	# GPIO_NR
