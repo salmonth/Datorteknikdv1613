@@ -32,52 +32,48 @@ main:
         call interrupt
 	ret
 
-
-
-
-
 interrupt:
-	#count up the counter from 0 to 15 modulo 16
-	movq	counter, %rbx
-	incq	%rbx
-	andq	$0xf, %rbx
-	movq	%rbx, counter
-	cmpq  $1, %rbx
-	je   one
-	cmpq  $2, %rbx
-	je   two
-	cmpq  $3, %rbx
-	je   three
-	cmpq  $4, %rbx
-	je   four
-	cmpq  $5, %rbx
-	je   five
-	cmpq  $6, %rbx
-	je   six
-	cmpq  $7, %rbx
-	je   seven
-	cmpq  $8, %rbx
-	je   eight
-	cmpq  $9, %rbx
-	je   nine
-	cmpq  $10, %rbx
-	je   ten
-	cmpq  $11, %rbx
-	je   eleven
-	cmpq  $12, %rbx
-	je   twelve
-	cmpq  $13, %rbx
-	je   thirteen
-	cmpq  $14, %rbx
-	je   fourteen
-	cmpq  $15, %rbx
-	je   fifteen
-    ret
+# count up the counter from 0 to 15 modulo 16
+movq	counter, %rbx
+incq	%rbx
+andq	$0xf, %rbx
+movq	%rbx, counter
+cmpq	$1, %rbx
+je	one
+cmpq	$2, %rbx
+je   two
+cmpq  $3, %rbx
+je   three
+cmpq  $4, %rbx
+je   four
+cmpq  $5, %rbx
+je   five
+cmpq  $6, %rbx
+je   six
+cmpq  $7, %rbx
+je   seven
+cmpq  $8, %rbx
+je   eight
+cmpq  $9, %rbx
+je   nine
+cmpq  $10, %rbx
+je   ten
+cmpq  $11, %rbx
+je   eleven
+cmpq  $12, %rbx
+je   twelve
+cmpq  $13, %rbx
+je   thirteen
+cmpq  $14, %rbx
+je   fourteen
+cmpq  $15, %rbx
+je   fifteen
+
 one:
-call LightOne
+call	LightOne
 ret
 two:
-call LightTwo
+call 	LightTwo
 ret
 three:
 call LightOne
@@ -135,70 +131,59 @@ call LightTwo
 call LightFour
 call LightEight
 ret
+
 LightOne:
 # set first GPIO pin to high level (LED on)
-movq    GPIO, %r9            # Load GPIO memory address
-movq    $1, %rcx         	# Load the GPIO number into %rcx
-subq    $1, %rcx             # Adjust to 0-based indexing
-imulq   $8, %rcx             # Multiply by 8
-
-movq    $0x3, %rbx           # Set value 0x3
-shlq    $4, %rbx             # Shift value 0x3 by 4 bits
-addq    $1, %rbx             # Add 1 to the result
-
-shlq    %cl, %rbx            # Shift left based on GPIO number
-
-orq     %rbx, %r9           # Combine with the existing value
-movq    %rbx, (GPIO)
-# Store the result back to the GPIO memory address
+movq	GPIO, %r9
+movq	$1, %rcx
+subq	$1,	%rcx
+imulq	$8, %rcx
+movq	$0x3, %rbx
+shlq	$4, %rbx
+addq	$1, %rbx
+shlq	%cl, %rbx
+orq		%rbx, 3(%r9)
+# Github:
+# orq     %rbx, %r9           # Combine with the existing value
+# movq    %rbx, (GPIO)
 ret
 LightTwo:
+# set second GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
 movq    $2, %rcx         	# Load the GPIO number into %rcx
-subq    $1, %rcx             # Adjust to 0-based indexing
-imulq   $8, %rcx             # Multiply by 8
-
-movq    $0x3, %rbx           # Set value 0x3
-shlq    $4, %rbx             # Shift value 0x3 by 4 bits
-addq    $1, %rbx             # Add 1 to the result
-
+subq    $1, %rcx            # Adjust to 0-based indexing
+imulq   $8, %rcx			# Multiply by 8
+movq    $0x3, %rbx			# Set value 0x3
+shlq    $4, %rbx			# Shift value 0x3 by 4 bits
+addq    $1, %rbx			# Add 1 to the result
 shlq    %cl, %rbx            # Shift left based on GPIO number
-
-orq     %rbx, %r9           # Combine with the existing value
-movq    %rbx, (GPIO)
-# Store the result back to the GPIO memory address
+orq	%rbx, 3(%r9)			# Combine with the existing value
 ret
+
 LightFour:
+# set third GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
 movq    $3, %rcx         	# Load the GPIO number into %rcx
 subq    $1, %rcx             # Adjust to 0-based indexing
 imulq   $8, %rcx             # Multiply by 8
-
 movq    $0x3, %rbx           # Set value 0x3
 shlq    $4, %rbx             # Shift value 0x3 by 4 bits
 addq    $1, %rbx             # Add 1 to the result
-
 shlq    %cl, %rbx            # Shift left based on GPIO number
-
-orq     %rbx, %r9           # Combine with the existing value
-movq    %rbx, (GPIO)
-# Store the result back to the GPIO memory address
+orq		%rbx, 3(%r9)			# Combine with the existing value
 ret
+
 LightEight:
+# set fourth GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
-movq    $4, %rcx         	# Load the GPIO number into %rcx
+movq    $4, %rcx			# Load the GPIO number into %rcx
 subq    $1, %rcx             # Adjust to 0-based indexing
 imulq   $8, %rcx             # Multiply by 8
-
 movq    $0x3, %rbx           # Set value 0x3
 shlq    $4, %rbx             # Shift value 0x3 by 4 bits
 addq    $1, %rbx             # Add 1 to the result
-
 shlq    %cl, %rbx            # Shift left based on GPIO number
-
-orq     %rbx, %r9           # Combine with the existing value
-movq    %rbx, (GPIO)
-# Store the result back to the GPIO memory address
+orq		%rbx, 3(%r9)			# Combine with the existing value
 ret
 
 setup:
@@ -214,43 +199,33 @@ orq     %rdi,%rbx
 orq     %rbx,%r9
 movq	%r9, GPIO
 
-
 # Set GPIO pins 1-4 as outputs (index 1-4)
+movq	GPIO, %rdi
 movq    $1,%rdx
-movq	%r9, %rdi
-
 output_loop:
-movq	GPIO,%rdi
-movq    $0x2, %rax	# Set output value
-shlq    $6, %rax	# Shift to the correct position
-movq    $4, %rcx	# Number of GPIO pins to set
-subq    %rdx, %rcx	# Adjust for the current pin
-imulq   $2, %rcx	# Multiply by 2 (each pin is 2 bits)
-shlq    %cl, %rax	# Shift to the correct position for the current pin
-orq     %rax, (%rdi)	# Set the output value for the current pin
-
-incq    %rdx		# Move to the next pin
-# movq	%rax,GPIO
-cmpq    $4, %rdx	# Check if all pins are set
-jle     output_loop	# Continue the loop if not
+movq    $0x2, %rax   		# Set output value
+shlq    $6, %rax     		# Shift to the correct position
+movq    $4, %rcx     		# Number of GPIO pins to set
+subq    %rdx, %rcx   		# Adjust for the current pin
+imulq   $2, %rcx     		# Multiply by 2 (each pin is 2 bits)
+shlq    %cl, %rax    		# Shift to the correct position for the current pin
+orq     %rax, (%rdi)		# Set the output value for the current pin
+incq    %rdx         		# Move to the next pin
+cmpq    $4, %rdx     		# Check if all pins are set
+jle     output_loop  		# Continue the loop if not
 
 # Set GPIO pin 0 as an input (index 0)
-movq    $0, %rsi 	# GPIO_NR
-movq	%r9, %rdi	# gpio_adrr
+setinput:
+movq    $0, %rdx 			# GPIO_NR
 movq	$0x3, %rbx
-
-movq    $8,%r8
-movq    %rsi, %rax
-xorq	%rdx, %rdx
-idivq   %r8
+movq    %rdx, %rax
 addq    %rax, %rdi
-
 movq	$3, %rcx
-subq    %rsi, %rcx
+subq    %rdx, %rcx
 imulq   $2, %rcx
 andq    $7, %rcx
 addq    $8, %rcx
 shlq	%cl, %rbx
-
-orq     (%rdi),%rbx
+orq     %rbx, (%rdi)
 ret
+
