@@ -142,11 +142,9 @@ movq	$0x3, %rbx
 shlq	$4, %rbx
 addq	$1, %rbx
 shlq	%cl, %rbx
-orq		%rbx, 3(%r9)
-# Github:
-# orq     %rbx, %r9           # Combine with the existing value
-# movq    %rbx, (GPIO)
+orq	%rbx, 3(%r9)
 ret
+
 LightTwo:
 # set second GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
@@ -170,7 +168,7 @@ movq    $0x3, %rbx           # Set value 0x3
 shlq    $4, %rbx             # Shift value 0x3 by 4 bits
 addq    $1, %rbx             # Add 1 to the result
 shlq    %cl, %rbx            # Shift left based on GPIO number
-orq		%rbx, 3(%r9)			# Combine with the existing value
+orq	%rbx, 3(%r9)			# Combine with the existing value
 ret
 
 LightEight:
@@ -183,7 +181,7 @@ movq    $0x3, %rbx           # Set value 0x3
 shlq    $4, %rbx             # Shift value 0x3 by 4 bits
 addq    $1, %rbx             # Add 1 to the result
 shlq    %cl, %rbx            # Shift left based on GPIO number
-orq		%rbx, 3(%r9)			# Combine with the existing value
+orq	%rbx, 3(%r9)			# Combine with the existing value
 ret
 
 setup:
@@ -228,4 +226,3 @@ addq    $8, %rcx
 shlq	%cl, %rbx
 orq     %rbx, (%rdi)
 ret
-
