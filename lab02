@@ -184,6 +184,51 @@ shlq    %cl, %rbx            # Shift left based on GPIO number
 orq	%rbx, 3(%r9)			# Combine with the existing value
 ret
 
+### turn off ights
+turnoff_one:
+movq	GPIO, %r9			# Load Gpio memory address
+movq	$0xCF, %rbx			# Set value 0xCF 
+movq	$1, %rcx			# Move gpio_nr to rcx
+subq	$1, %rcx			# Sub 1 from GPIO nr
+imulq	$8, %rcx			# Multiply result by 8
+shlq	%cl, %rbx			# Shift left based on GPIO number
+notq	%rbx				# Invert shift result
+andq	%rbx, 3(%r9)			# Combine with existing value (gpio_addr + 3)
+ret
+
+turnoff_two:
+movq	GPIO, %r9
+movq	$0xCF, %rbx
+movq	$2, %rcx
+subq	$1, %rcx
+imulq	$8, %rcx
+shlq	%cl, %rbx
+notq	%rbx
+andq	%rbx, 3(%r9)
+ret
+
+turnoff_four:
+movq	GPIO, %r9
+movq	$0xCF, %rbx
+movq	$3, %rcx
+subq	$1, %rcx
+imulq	$8, %rcx
+shlq	%cl, %rbx
+notq	%rbx
+andq	%rbx, 3(%r9)
+ret
+
+turnoff_eight:
+movq	GPIO, %r9
+movq	$0xCF, %rbx
+movq	$4, %rcx
+subq	$1, %rcx
+imulq	$8, %rcx
+shlq	%cl, %rbx
+notq	%rbx
+andq	%rbx, 3(%r9)
+ret
+
 setup:
 # calculate and save the memory address of the GPIO
 movq	$0x60, %rdi
