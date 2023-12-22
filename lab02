@@ -72,84 +72,83 @@ cmpq	$15, %rbx
 je		fifteen
 
 zero:
-call	turnoff_one
-call	turnoff_two
 call	turnoff_four
-call	turnoff_eight
-movq	counter, %rbx
-incq	%rbx
+call	turnoff_three
+call	turnoff_two
+call 	turnoff_one
+ret
 one:
-call	LightOne
+call	LightFour
 ret
 two:
-call	turnoff_one
-call 	LightTwo
+call	turnoff_four
+call 	LightThree
 ret
 three:
-call	LightOne
-call	LightTwo
+call	LightFour
+call	LightThree
 ret
 four:
-call	turnoff_one
-call	turnoff_two
-call	LightFour
+call	turnoff_four
+call	turnoff_three
+call	LightTwo
 ret
 five:
-call	turnoff_two
-call	LightOne
 call	LightFour
+call	LightTwo
 ret
 six:
+call	turnoff_four
+call	LightThree
 call	LightTwo
-call	LightFour
 ret
 seven:
-call	LightOne
-call	LightTwo
 call	LightFour
+call	LightThree
+call	LightTwo
 ret
 eight:
-call	turnoff_one
-call	turnoff_two
 call	turnoff_four
-call	LightEight
+call	turnoff_three
+call	turnoff_two
+call	LightOne
 ret
 nine:
+call	LightFour
 call	LightOne
-call	LightEight
 ret
 ten:
-call	turnoff_one
-call	LightTwo
-call	LightEight
+call	turnoff_four
+call	LightThree
+call	LightOne
 ret
 eleven:
+call	LightFour
+call	LightThree
 call	LightOne
-call	LightTwo
-call	LightEight
 ret
 twelve:
-call	turnoff_one
-call	turnoff_two
-call	LightFour
-call	LightEight
+call	turnoff_four
+call	turnoff_three
+call	LightTwo
+call	LightOne
 ret
 thirteen:
-call	LightOne
 call	LightFour
-call	LightEight
+call	LightTwo
+call	LightOne
 ret
 fourteen:
-call	turnoff_one
+call	turnoff_four
+call	LightThree
 call	LightTwo
-call	LightFour
-call	LightEight
+call	LightOne
 ret
 fifteen:
-call	LightOne
-call	LightTwo
 call	LightFour
-call	LightEight
+call	LightThree
+call	LightTwo
+call	LightOne
 ret
 
 LightOne:
@@ -162,9 +161,8 @@ movq	$0x3, %rbx
 shlq	$4, %rbx
 addq	$1, %rbx
 shlq	%cl, %rbx
-orq	%rbx, 3(%r9)
+orq		%rbx, 3(%r9)
 ret
-
 LightTwo:
 # set second GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
@@ -175,10 +173,9 @@ movq    $0x3, %rbx			# Set value 0x3
 shlq    $4, %rbx			# Shift value 0x3 by 4 bits
 addq    $1, %rbx			# Add 1 to the result
 shlq    %cl, %rbx            # Shift left based on GPIO number
-orq	%rbx, 3(%r9)			# Combine with the existing value
+orq		%rbx, 3(%r9)			# Combine with the existing value
 ret
-
-LightFour:
+LightThree:
 # set third GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
 movq    $3, %rcx         	# Load the GPIO number into %rcx
@@ -188,10 +185,9 @@ movq    $0x3, %rbx           # Set value 0x3
 shlq    $4, %rbx             # Shift value 0x3 by 4 bits
 addq    $1, %rbx             # Add 1 to the result
 shlq    %cl, %rbx            # Shift left based on GPIO number
-orq	%rbx, 3(%r9)			# Combine with the existing value
+orq		%rbx, 3(%r9)			# Combine with the existing value
 ret
-
-LightEight:
+LightFour:
 # set fourth GPIO pin to high level (LED on)
 movq    GPIO, %r9            # Load GPIO memory address
 movq    $4, %rcx			# Load the GPIO number into %rcx
@@ -201,52 +197,49 @@ movq    $0x3, %rbx           # Set value 0x3
 shlq    $4, %rbx             # Shift value 0x3 by 4 bits
 addq    $1, %rbx             # Add 1 to the result
 shlq    %cl, %rbx            # Shift left based on GPIO number
-orq	%rbx, 3(%r9)			# Combine with the existing value
+orq		%rbx, 3(%r9)			# Combine with the existing value
 ret
 
-### turn off ights
+# turn off ights
 turnoff_one:
 movq	GPIO, %r9			# Load Gpio memory address
-movq	$0xCF, %rbx			# Set value 0xCF 
+movq	$0xCF, %rax			# Set value 0xCF 
 movq	$1, %rcx			# Move gpio_nr to rcx
 subq	$1, %rcx			# Sub 1 from GPIO nr
 imulq	$8, %rcx			# Multiply result by 8
-shlq	%cl, %rbx			# Shift left based on GPIO number
-notq	%rbx				# Invert shift result
-andq	%rbx, 3(%r9)			# Combine with existing value (gpio_addr + 3)
+shlq	%cl, %rax			# Shift left based on GPIO number
+not     %rax				# Invert shift result
+andq	%rax, 3(%r9)		# Combine with existing value (gpio_addr + 3)
 ret
-
 turnoff_two:
 movq	GPIO, %r9
-movq	$0xCF, %rbx
+movq	$0xCF, %rax
 movq	$2, %rcx
 subq	$1, %rcx
 imulq	$8, %rcx
-shlq	%cl, %rbx
-notq	%rbx
-andq	%rbx, 3(%r9)
+shlq	%cl, %rax
+not     %rax
+andq	%rax, 3(%r9)
 ret
-
-turnoff_four:
+turnoff_three:
 movq	GPIO, %r9
-movq	$0xCF, %rbx
+movq	$0xCF, %rax
 movq	$3, %rcx
 subq	$1, %rcx
 imulq	$8, %rcx
-shlq	%cl, %rbx
-notq	%rbx
-andq	%rbx, 3(%r9)
+shlq	%cl, %rax
+not     %rax
+andq	%rax, 3(%r9)
 ret
-
-turnoff_eight:
+turnoff_four:
 movq	GPIO, %r9
-movq	$0xCF, %rbx
+movq	$0xCF, %rax
 movq	$4, %rcx
 subq	$1, %rcx
 imulq	$8, %rcx
-shlq	%cl, %rbx
-notq	%rbx
-andq	%rbx, 3(%r9)
+shlq	%cl, %rax
+not     %rax
+andq	%rax, 3(%r9)
 ret
 
 setup:
@@ -260,19 +253,23 @@ not     %r9
 andq    $0xFF,%r9
 orq     %rdi,%rbx
 orq     %rbx,%r9
+# hårdkodat:
+# check address using command 'objdump -t counter'
+movq	$0x602061, %r9
 movq	%r9, GPIO
 
 # Set GPIO pins 1-4 as outputs (index 1-4)
 movq	GPIO, %rdi
 movq    $1,%rdx
 output_loop:
-movq    $0x2, %rax   		# Set output value
-shlq    $6, %rax     		# Shift to the correct position
+movq	GPIO, %rdi
+movq    $0x2, %rbx   		# Set output value
+shlq    $6, %rbx     		# Shift to the correct position
 movq    $4, %rcx     		# Number of GPIO pins to set
 subq    %rdx, %rcx   		# Adjust for the current pin
 imulq   $2, %rcx     		# Multiply by 2 (each pin is 2 bits)
-shlq    %cl, %rax    		# Shift to the correct position for the current pin
-orq     %rax, (%rdi)		# Set the output value for the current pin
+shlq    %cl, %rbx    		# Shift to the correct position for the current pin
+orq     %rbx, (%rdi)		# Set the output value for the current pin
 incq    %rdx         		# Move to the next pin
 cmpq    $4, %rdx     		# Check if all pins are set
 jle     output_loop  		# Continue the loop if not
