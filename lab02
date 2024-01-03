@@ -253,9 +253,8 @@ not     %r9
 andq    $0xFF,%r9
 orq     %rdi,%rbx
 orq     %rbx,%r9
-# hårdkodat:
-# check address using command 'objdump -t counter'
-movq	$0x602061, %r9
+addq	$0x1000, %r9		# Add twelve bits to get result 0x601061 => 0x602061
+# movq	  $0x602061, %r9	# hårdkodad adress
 movq	%r9, GPIO
 
 # Set GPIO pins 1-4 as outputs (index 1-4)
